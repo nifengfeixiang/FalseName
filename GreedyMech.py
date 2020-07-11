@@ -15,13 +15,11 @@ def userProcess(userCost, userTaskSet, totalUserNum):
     size = np.zeros((totalUserNum,), dtype=np.int)
 
     for i in range(totalUserNum):
-        size[i] = sum(userTaskSet[:,i])
+        size[i] = sum(userTaskSet[:, i])
     userTaskSize = size
-
 
     # 计算每个用户的报价
     userBid = userTaskSize * userCost
-
 
     # # 对每个user的size进行分组
     # disSequence = []
@@ -51,12 +49,12 @@ def setValueCompute(taskSet, set):
 
 # 得到每个user的任务集合
 def getUserTaskSet(user, userTaskSet, totalTaskNum):
-
     userSet = set()
     for i in range(totalTaskNum):
         if (userTaskSet[i][user] == 1):
             userSet.add(i)
     return userSet
+
 
 def pricePerMarginalValue(user, R, userBid, taskSet, userTaskSet, totalTaskNum):
     user_bid = userBid[user]
@@ -93,21 +91,22 @@ def Argmin(groupList, R, userBid, taskSet, userTaskSet, totalTaskNum):
             minUser = user
     return minPricePerValue, minMarginalValue, minUser, minUserSet, minUserBid
 
-def GreedyAlgSM(B, taskSet,userCost, userTaskSet, totalTaskNum,totalUserNum):
-    R=set()
-    S_w=set()
-    userPayment=0
-    averageUtility=0
+
+def GreedyAlgSM(B, taskSet, userCost, userTaskSet, totalTaskNum, totalUserNum):
+    R = set()
+    S_w = set()
+    userPayment = 0
+    averageUtility = 0
     temp_list = [i for i in range(totalUserNum)]
 
-    #处理user相关的信息
-    userTaskSize, userBid=userProcess(userCost, userTaskSet, totalUserNum)
+    # 处理user相关的信息
+    userTaskSize, userBid = userProcess(userCost, userTaskSet, totalUserNum)
 
     # 选出当前性价比最高的user；
     minPricePerValue, minMarginalValue, minUser, minUserSet, minUserBid = Argmin(temp_list, R, userBid, taskSet,
-                                                                              userTaskSet, totalTaskNum)
-    #判断当前是否已经已经没有可以选择的user
-    if minMarginalValue==0:
+                                                                                 userTaskSet, totalTaskNum)
+    # 判断当前是否已经已经没有可以选择的user
+    if minMarginalValue == 0:
         totalValue = setValueCompute(taskSet, R)
         return userPayment, totalValue, S_w, round(averageUtility / totalUserNum)
 
@@ -117,22 +116,22 @@ def GreedyAlgSM(B, taskSet,userCost, userTaskSet, totalTaskNum,totalUserNum):
     # tempR_value = setValueCompute(taskSet, RcupT_i_set)
 
     # 循环遍历所有的当前组中的所有user
-    while (userPayment+minUserBid<=B):
+    while (userPayment + minUserBid <= B):
         temp_list.remove(minUser)
         R = RcupT_i_set
         S_w.add(minUser)
-        userPayment=userPayment+minUserBid
-        averageUtility=averageUtility+minUserBid-userCost[minUser]*userTaskSize[minUser]
+        userPayment = userPayment + minUserBid
+        averageUtility = averageUtility + minUserBid - userCost[minUser] * userTaskSize[minUser]
         minPricePerValue, minMarginalValue, minUser, minUserSet, minUserBid = Argmin(temp_list, R, userBid, taskSet,
                                                                                      userTaskSet, totalTaskNum)
         if minMarginalValue == 0:
             totalValue = setValueCompute(taskSet, R)
-            return userPayment, totalValue, S_w,round(averageUtility/totalUserNum)
+            return userPayment, totalValue, S_w, round(averageUtility / totalUserNum)
         RcupT_i_set = R | minUserSet
         # tempR_value = setValueCompute(taskSet, RcupT_i_set)
-    totalValue=setValueCompute(taskSet,R)
+    totalValue = setValueCompute(taskSet, R)
     # 返回更新后的R,S_w,q
-    return userPayment, totalValue, S_w,round(averageUtility/totalUserNum)
+    return userPayment, totalValue, S_w, round(averageUtility / totalUserNum)
 
 
 if __name__ == '__main__':
@@ -150,7 +149,8 @@ if __name__ == '__main__':
     # userTaskSet, userCost = UserSet(totalUserNum, userCosPerValueDis, userTaskNumDis, taskSet)
     userTaskSet, userCost = Data.UserTaskSet()
     # u_w, R, p, totalValue = SM(budget, taskSet, userTaskSet, userCost)
-    userPayment, finalValue, S_w ,averageUtility= GreedyAlgSM(budget, taskSet,userCost, userTaskSet, totalTaskNum,totalUserNum)
+    userPayment, finalValue, S_w, averageUtility = GreedyAlgSM(budget, taskSet, userCost, userTaskSet, totalTaskNum,
+                                                               totalUserNum)
 
     # print("taskSet:", taskSet, "\n")
     # print("userTaskSet:", userTaskSet, "\n")

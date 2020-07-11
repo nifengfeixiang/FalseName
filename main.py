@@ -52,6 +52,7 @@ def controlUser(budget, taskSet, userCost, userTaskSet, totalTaskNum, indexUserN
     return x_1, y_1, y_2, y_3, Y_1, Y_2
 
 
+
 def doControlUser(reNum, budget, totalTaskNum, taskValueDis, totalUserNum, userCosPerValueDis, userTaskNumDis):
     # user 考虑的组数(user 考虑100-300，每次增加20)
     indexUserNum = int(((totalUserNum - 40) / 20) + 1)
