@@ -365,6 +365,46 @@ def doControlBudget(reNum, maxBudget, totalTaskNum, taskValueDis, totalUserNum, 
     plt.show()  # show the plot on the screen
 
 
+def compareBudget(indexBudget, taskSet, userCost, userTaskSet, totalTaskNum, totalUserNum, userTaskNumDis, userSetDict,
+                  userSetSubsetDict):
+    initUser = 40
+    x_1 = np.array([])
+    y_1 = np.array([])
+    y_2 = np.array([])
+    y_3 = np.array([])
+    Y_1 = np.array([])
+    Y_2 = np.array([])
+    # 从50到800
+    for i in range(indexBudget):
+        budget = 40 + i * initUser
+        print("budget为:", budget)
+
+        userPayment_SM, finalValue_SM, S_w_SM, averageUtility_SM = SM.SingleMindedAlg(budget / 2, taskSet,
+                                                                                      userCost,
+                                                                                      userTaskSet,
+                                                                                      totalTaskNum, totalUserNum,
+                                                                                      userTaskNumDis)
+        print("SM总价值：", finalValue_SM, "SM平均收益：", averageUtility_SM)
+        # userCostTemp_2 = userCost[:num]
+        # userTaskSetTemp_2 = userTaskSet[:, :num]
+        userPayment_MM, finalValue_MM, S_w_MM, averageUtility_MM = MM.MultiMindedAlg(budget, taskSet, userCost,
+                                                                                     totalUserNum,
+                                                                                     userSetDict, userSetSubsetDict)
+        print("MM总价值：", finalValue_MM, "MM平均收益：", averageUtility_MM)
+
+        userPayment_GM, finalValue_GM, S_w_GM, averageUtility_GM = GM.GreedyAlgSM(budget, taskSet, userCost,
+                                                                                  userTaskSet, totalTaskNum,
+                                                                                  totalUserNum)
+        print("GM总价值：", finalValue_GM, "GM平均收益：", averageUtility_GM, "\n")
+
+        x_1 = np.append(x_1, np.array([budget]))
+        y_1 = np.append(y_1, np.array([finalValue_SM]))
+        y_2 = np.append(y_2, np.array([finalValue_MM]))
+        y_3 = np.append(y_3, np.array([finalValue_GM]))
+        Y_1 = np.append(Y_1, np.array([averageUtility_SM]))
+        Y_2 = np.append(Y_2, np.array([averageUtility_MM]))
+    return x_1, y_1, y_2, y_3, Y_1, Y_2
+
 if __name__ == '__main__':
     # 初始设置参数
     reNum = 20
