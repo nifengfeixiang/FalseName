@@ -74,29 +74,30 @@ def WinnerSelection(R, S_w, winnerSequence,groupList, userBid, taskSet, userTask
         # tempR_value = sm.setValueCompute(taskSet, RcupT_i_set)
         userTaskValue = sm.setValueCompute(taskSet, minUserSet)
 
-        # print("当前的R集合为：", R)
-        # print("性价比最高的user为：", minUser, "报价为：", round(userBid[minUser]), "边际价值为：", minMarginalValue, "value R是",
-        #       tempR_value)
+        print("当前的R集合为：", R)
+        print("性价比最高的user为：", minUser, "报价为：", round(userBid[minUser],2), "边际价值为：", minMarginalValue,"\n")
         # print("边际价值单价为：", minPricePerValue, "此时q_max为：", q, "此时B/R为：", round(B / tempR_value,2) )
     # 返回更新后的R,S_w,q
+    print("winner sequence", winnerSequence,"\n")
     return R, S_w, winnerSequence
 
 def PaymentScheme(R, groupList, userPayment, userBid, taskSet, userTaskSet, totalTaskNum):
-    print("payment\n")
-    for i in groupList:
+    print("---计算当前组的payment---\n")
+    for user in groupList:
         # if (i in groupList):
         # print("当前考虑winning user为：",i)
         # 计算winner i 的payment
-        print("计算user",i,"的payment\n")
-        tempR = R
+        print("计算user",user,"的payment:")
+
+        tempR = copy.deepcopy(R)
         p_i = 0
         # user i 的任务集合
-        T_i = sm.getUserTaskSet(i, userTaskSet, totalTaskNum)
+        T_i = sm.getUserTaskSet(user, userTaskSet, totalTaskNum)
         # user i 的报价
-        b_i=userBid[i]
+        b_i=userBid[user]
         # 去除user i
         temp_list = copy.deepcopy(groupList)
-        temp_list.remove(i)
+        temp_list.remove(user)
 
         # 判断去除user后的list是否为空；
         if (len(temp_list) != 0):
@@ -108,13 +109,14 @@ def PaymentScheme(R, groupList, userPayment, userBid, taskSet, userTaskSet, tota
             #     userPayment[i] = sm.setValueCompute(taskSet, T_i - tempR)
             # else:
                 # 循环遍历
-            while (len(temp_list)!=0 and len(tempR)!=len(taskSet)):
+            # print("性价比最高的user为：", minUser, "报价为：", round(userBid[minUser], 2), "边际价值为：", minMarginalValue, "\n")
+            while (len(temp_list)!=0 and len(tempR)!=totalTaskNum):
                 if minUserBid>sm.setValueCompute(taskSet,minUserSet):
                     break
 
-                v_i_tempR = sm.setValueCompute(taskSet, T_i | tempR)
+                v_i_tempR = sm.setValueCompute(taskSet, T_i & tempR)
                 if minMarginalValue == 0:
-                    userPayment[i] =max(p_i,v_i_tempR)
+                    p_i =max(p_i,v_i_tempR)
                 else:
                     p_i = max(p_i, min(v_i_tempR * round(minUserBid/minMarginalValue,2), v_i_tempR))
 
@@ -127,13 +129,15 @@ def PaymentScheme(R, groupList, userPayment, userBid, taskSet, userTaskSet, tota
                                                                                              taskSet,
                                                                                              userTaskSet,
                                                                                              totalTaskNum)
+                # print("性价比最高的user为：", minUser, "报价为：", round(userBid[minUser], 2), "边际价值为：", minMarginalValue, "\n")
             v_i_tempRPrime=sm.setValueCompute(taskSet, T_i&tempR)
             if b_i<=v_i_tempRPrime:
-                userPayment[i] = max(p_i,v_i_tempRPrime)
-            print(userPayment[i])
+                p_i = max(p_i,v_i_tempRPrime)
+            userPayment[user]=p_i
+            # print(userPayment[i],"\n")
             # else:
             #     userPayment[i] = setValueCompute(taskSet, T_i - tempR)
-        # print("当前user paymenmt为：", userPayment[i], "\n")
+        print("当前user paymenmt为：", userPayment[user], "\n")
     # print("当前分组payment：",userPayment,"\n")
     return userPayment
 
