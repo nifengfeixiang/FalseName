@@ -2,6 +2,7 @@ import DataPre as dp
 import MultiMinded as MM
 import SingleMinded as SM
 import GreedyMech as GM
+import WPG_infocom as wpg
 import numpy as np
 import copy
 import matplotlib.pyplot as plt
@@ -366,17 +367,140 @@ def doControlBudget(reNum, maxBudget, totalTaskNum, taskValueDis, totalUserNum, 
     plt.show()  # show the plot on the screen
 
 
+def compareBudget(indexBudget, taskSet, userCost, userTaskSet, totalTaskNum, totalUserNum, userTaskNumDis, userSetDict,
+                  userSetSubsetDict):
+    initUser = 40
+    x_1 = np.array([])
+    y_1 = np.array([])
+    y_2 = np.array([])
+    y_3 = np.array([])
+    # Y_1 = np.array([])
+    # Y_2 = np.array([])
+    # 从50到800
+    for i in range(indexBudget):
+        budget = 40 + i * initUser
+        print("budget为:", budget)
+
+        userPayment_SM, finalValue_SM, S_w_SM, averageUtility_SM = SM.SingleMindedAlg(budget / 2, taskSet,
+                                                                                      userCost,
+                                                                                      userTaskSet,
+                                                                                      totalTaskNum, totalUserNum,
+                                                                                      userTaskNumDis)
+        print("SM总价值：", finalValue_SM, "SM平均收益：", averageUtility_SM)
+        # userCostTemp_2 = userCost[:num]
+        # userTaskSetTemp_2 = userTaskSet[:, :num]
+        userPayment_MM, finalValue_MM, S_w_MM, averageUtility_MM = MM.MultiMindedAlg(budget, taskSet, userCost,
+                                                                                     totalUserNum,
+                                                                                     userSetDict, userSetSubsetDict)
+        print("MM总价值：", finalValue_MM, "MM平均收益：", averageUtility_MM)
+
+        userPayment_GM, finalValue_GM, S_w_GM, averageUtility_GM = GM.GreedyAlgSM(budget, taskSet, userCost,
+                                                                                  userTaskSet, totalTaskNum,
+                                                                                  totalUserNum)
+        print("GM总价值：", finalValue_GM, "GM平均收益：", averageUtility_GM, "\n")
+
+        x_1 = np.append(x_1, np.array([budget]))
+        y_1 = np.append(y_1, np.array([finalValue_SM]))
+        y_2 = np.append(y_2, np.array([finalValue_MM]))
+        y_3 = np.append(y_3, np.array([finalValue_GM]))
+        # Y_1 = np.append(Y_1, np.array([averageUtility_SM]))
+        # Y_2 = np.append(Y_2, np.array([averageUtility_MM]))
+
+    #计算infocom方法SPIM-S
+    userPayment_IN, finalValue_IN, S_w_IN, winnerSequence_IN=wpg.SybilAlg(taskSet, userCost, userTaskSet, totalTaskNum, totalUserNum, userTaskNumDis)
+    # print("payment sequence", userPayment,"\n")
+    value = np.array([])
+    payment = np.array([])
+    totalPayment = 0
+    R = set()
+    for winner in winnerSequence_IN:
+        task = SM.getUserTaskSet(winner, userTaskSet, totalTaskNum)
+        R = R | task
+        v = SM.setValueCompute(taskSet, R)
+        totalPayment = totalPayment + userPayment_IN[winner]
+        # print("(value,totalpayment:",v,totalPayment)
+        # 添加此时的value-payment关系组
+        value = np.append(value, np.array([v]))
+        payment = np.append(payment, np.array([totalPayment]))
+    return x_1, y_1, y_2, y_3, value, payment
+
+
+def doCompareBudget(reNum, maxBudget, totalTaskNum, taskValueDis, totalUserNum, userCosPerValueDis, userTaskNumDis):
+    # user 考虑的组数(user 考虑100-300，每次增加20)
+    indexBudget = int(((maxBudget - 40) / 40) + 1)
+    budget, finalValue_SM, finalValue_MM, finalValue_GM, finalValue_SPIM_S=np.zeros((indexBudget,), dtype=np.float),np.zeros((indexBudget,), dtype=np.float), np.zeros((indexBudget,),
+                                                                                            dtype=np.float), np.zeros(
+        (indexBudget,), dtype=np.float), np.zeros((indexBudget,),
+                                                  dtype=np.float)
+    # 总共执行reNum组随机数据然后去平均值画图
+    for i in range(reNum):
+        print("------------------重复次数为-----------：", i, "\n")
+        Data = dp.DataGenerate(budget, totalTaskNum, taskValueDis, totalUserNum, userCosPerValueDis, userTaskNumDis)
+        # taskSet = TaskSet(totalTaskNum, taskValueDis)
+        taskSet = Data.TaskSet()
+        # userTaskSet, userCost = UserSet(totalUserNum, userCosPerValueDis, userTaskNumDis, taskSet)
+        userTaskSet, userCost = Data.UserTaskSet()
+        # u_w, R, p, totalValue = SM(budget, taskSet, userTaskSet, userCost)
+
+        userSetDict = Data.userSetDictCompute(userTaskSet)
+        userSetSubsetDict = Data.userSetSubsetDictCompute(userSetDict)
+        # 控制user数量的图
+        currentBudget, y_1, y_2, y_3, value, payment = compareBudget(indexBudget, taskSet, userCost,
+                                                                             userTaskSet, totalTaskNum, totalUserNum,
+                                                                             userTaskNumDis, userSetDict,
+                                                                             userSetSubsetDict)
+
+        # print("GM_pu_1", GM_pu_1, "\n")
+        # print("GM_platformUtility_1", GM_platformUtility_1, "\n")
+
+        budget = budget + currentBudget
+        finalValue_SM = finalValue_SM + y_1
+        finalValue_MM = finalValue_MM + y_2
+        finalValue_GM = finalValue_GM + y_3
+
+        tempValue=np.zeros((indexBudget,), dtype=np.float)
+        for i in range(indexBudget):
+            for j in range(payment.shape[0]):
+                if payment[j]<= 40*(i+1):
+                    tempValue[i]=value[j]
+
+        finalValue_SPIM_S=finalValue_SPIM_S+tempValue
+
+
+
+        # print(SM_platformUtility_1,SM_platformUtility_2,MM_platformUtility_1,MM_platformUtility_2,SM_averageUtility_1,SM_averageUtility_2,MM_averageUtility_1,MM_averageUtility_2)
+
+    # 画图-platformUtility
+    plt.figure()
+    plt.plot(budget / reNum, finalValue_SM / reNum, 'r', marker='x',
+             label='SPBF-SM')  # use pylab to plot x and y : Give your plots names
+    plt.plot(budget / reNum, finalValue_MM / reNum, 'g', marker='.', label='SPBF-MM')
+    plt.plot(budget / reNum, finalValue_GM / reNum, 'b', marker='*', label='GM-SM')
+    plt.plot(budget / reNum, finalValue_SPIM_S / reNum, 'y', marker='o', label='SPIM-S')
+
+    plt.title('Impact of budget')  # give plot a title
+    plt.xlabel('Budget')  # make axis labels
+    plt.ylabel('Total Value')
+
+    # pl.xlim(40, 2000)  # set axis limits
+    # pl.ylim(35.0, 50.0)
+    plt.legend()
+    plt.savefig("paymentCompare.pdf")
+    plt.show()  # show the plot on the screen
+
+
+
 if __name__ == '__main__':
     # 初始设置参数
-    reNum = 20
-    budget = 200
-    totalTaskNum = 150
-    taskValueDis = 5
-    totalUserNum =300
-    userCosPerValueDis = 10
-    userTaskNumDis = 5
-
-    doControlUser(reNum, budget, totalTaskNum, taskValueDis, totalUserNum, userCosPerValueDis, userTaskNumDis)
+    # reNum = 20
+    # budget = 200
+    # totalTaskNum = 150
+    # taskValueDis = 5
+    # totalUserNum =300
+    # userCosPerValueDis = 10
+    # userTaskNumDis = 5
+    #
+    # doControlUser(reNum, budget, totalTaskNum, taskValueDis, totalUserNum, userCosPerValueDis, userTaskNumDis)
 
     # # 初始设置参数
     # reNum = 50
@@ -398,3 +522,13 @@ if __name__ == '__main__':
     # userTaskNumDis = 5
     #
     # doControlBudget(reNum, budget, totalTaskNum, taskValueDis, totalUserNum, userCosPerValueDis, userTaskNumDis)
+
+    reNum = 1
+    budget = 320
+    totalTaskNum = 150
+    taskValueDis = 5
+    totalUserNum = 200
+    userCosPerValueDis = 10
+    userTaskNumDis = 5
+
+    doCompareBudget(reNum, budget, totalTaskNum, taskValueDis, totalUserNum, userCosPerValueDis, userTaskNumDis)

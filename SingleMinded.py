@@ -141,8 +141,8 @@ def PaymentScheme(B, R, q, S_w, groupList, userPayment, userBid, taskSet, userTa
         if (i in S_w):
             # print("当前考虑winning user为：",i)
             # 计算winner i 的payment
-            tempR = R
-            q_prime = q
+            tempR = copy.deepcopy(R)
+            q_prime = copy.deepcopy(q)
             p_i = 0
             # user i 的任务集合
             T_i = getUserTaskSet(i, userTaskSet, totalTaskNum)
