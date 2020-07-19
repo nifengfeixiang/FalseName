@@ -5,6 +5,7 @@ import math
 import SingleMinded as sm
 import matplotlib.pyplot as plt
 
+
 def pricePerMarginalValue(user, R, userBid, taskSet, userTaskSet, totalTaskNum):
     user_bid = userBid[user]
 
@@ -14,8 +15,8 @@ def pricePerMarginalValue(user, R, userBid, taskSet, userTaskSet, totalTaskNum):
     user_marginal_set = user_set - R
     # user_marginal_value = 0
     user_marginal_value = sm.setValueCompute(taskSet, user_marginal_set)
-    if user_marginal_value> 0:
-        pricePerValue = round(user_bid / user_marginal_value,2)
+    if user_marginal_value > 0:
+        pricePerValue = round(user_bid / user_marginal_value, 2)
     else:
         pricePerValue = 100000
     return pricePerValue, user_marginal_value, user_bid, user_set
@@ -39,13 +40,14 @@ def Argmin(groupList, R, userBid, taskSet, userTaskSet, totalTaskNum):
             minUser = user
     return minPricePerValue, minMarginalValue, minUser, minUserSet, minUserBid
 
-def WinnerSelection(R, S_w, winnerSequence,groupList, userBid, taskSet, userTaskSet, totalTaskNum):
+
+def WinnerSelection(R, S_w, winnerSequence, groupList, userBid, taskSet, userTaskSet, totalTaskNum):
     # print("winner 选择，当前考虑分组为：", groupList)
-    temp_list = groupList
+    temp_list = copy.deepcopy(groupList)
 
     # 选出当前性价比最高的user；
     minPricePerValue, minMarginalValue, minUser, minUserSet, minUserBid = Argmin(temp_list, R, userBid, taskSet,
-                                                                                    userTaskSet, totalTaskNum)
+                                                                                 userTaskSet, totalTaskNum)
 
     # 判断当前是否已经已经没有可以选择的user
     # if minMarginalValue == 0:
@@ -53,13 +55,13 @@ def WinnerSelection(R, S_w, winnerSequence,groupList, userBid, taskSet, userTask
     # 选择user i 后的任务集合
     # 选择user i 后的任务集合价值
     # tempR_value = sm.setValueCompute(taskSet, RcupT_i_set)
-    print("当前最高性价比seller是：",minUser,"\n")
-    userTaskValue=sm.setValueCompute(taskSet, minUserSet)
+    print("当前最高性价比seller是：", minUser, )
+    userTaskValue = sm.setValueCompute(taskSet, minUserSet)
     # print("当前的R集合为：",R)
     # print("性价比最高的user为：", minUser,"报价为：",round(userBid[minUser]),"边际价值为：",minMarginalValue,"value R是",tempR_value)
     # print("边际价值单价为：",minPricePerValue,"此时q_max为：",q,"此时B/R为：",round(B / tempR_value,2))
     # 循环遍历所有的当前组中的所有user
-    while (minUserBid<= userTaskValue and len(temp_list)!=0):
+    while (minUserBid <= userTaskValue and len(temp_list) != 0):
         temp_list.remove(minUser)
         R = R | minUserSet
         # print("当前被选择winner为：",minUser,"\n")
@@ -74,12 +76,13 @@ def WinnerSelection(R, S_w, winnerSequence,groupList, userBid, taskSet, userTask
         # tempR_value = sm.setValueCompute(taskSet, RcupT_i_set)
         userTaskValue = sm.setValueCompute(taskSet, minUserSet)
 
-        print("当前的R集合为：", R)
-        print("性价比最高的user为：", minUser, "报价为：", round(userBid[minUser],2), "边际价值为：", minMarginalValue,"\n")
+        # print("当前的R集合为：", R)
+        print("性价比最高的user为：", minUser, "报价为：", round(userBid[minUser], 2), "边际价值为：", minMarginalValue, "\n")
         # print("边际价值单价为：", minPricePerValue, "此时q_max为：", q, "此时B/R为：", round(B / tempR_value,2) )
     # 返回更新后的R,S_w,q
-    print("winner sequence", winnerSequence,"\n")
+    print("winner sequence", winnerSequence, "\n")
     return R, S_w, winnerSequence
+
 
 def PaymentScheme(R, groupList, userPayment, userBid, taskSet, userTaskSet, totalTaskNum):
     print("---计算当前组的payment---\n")
@@ -87,14 +90,14 @@ def PaymentScheme(R, groupList, userPayment, userBid, taskSet, userTaskSet, tota
         # if (i in groupList):
         # print("当前考虑winning user为：",i)
         # 计算winner i 的payment
-        print("计算user",user,"的payment:")
+        print("计算user", user, "的payment:")
 
         tempR = copy.deepcopy(R)
         p_i = 0
         # user i 的任务集合
         T_i = sm.getUserTaskSet(user, userTaskSet, totalTaskNum)
         # user i 的报价
-        b_i=userBid[user]
+        b_i = userBid[user]
         # 去除user i
         temp_list = copy.deepcopy(groupList)
         temp_list.remove(user)
@@ -108,21 +111,21 @@ def PaymentScheme(R, groupList, userPayment, userBid, taskSet, userTaskSet, tota
             # if minMarginalValue == 0:
             #     userPayment[i] = sm.setValueCompute(taskSet, T_i - tempR)
             # else:
-                # 循环遍历
+            # 循环遍历
             # print("性价比最高的user为：", minUser, "报价为：", round(userBid[minUser], 2), "边际价值为：", minMarginalValue, "\n")
-            while (len(temp_list)!=0 and len(tempR)!=totalTaskNum):
-                if minUserBid>sm.setValueCompute(taskSet,minUserSet):
+            while (len(temp_list) != 0 and len(tempR) != totalTaskNum):
+                if minUserBid > sm.setValueCompute(taskSet, minUserSet):
                     break
 
                 v_i_tempR = sm.setValueCompute(taskSet, T_i & tempR)
                 if minMarginalValue == 0:
-                    p_i =max(p_i,v_i_tempR)
+                    p_i = max(p_i, v_i_tempR)
                 else:
-                    p_i = max(p_i, min(v_i_tempR * round(minUserBid/minMarginalValue,2), v_i_tempR))
+                    p_i = max(p_i, min(v_i_tempR * round(minUserBid / minMarginalValue, 2), v_i_tempR))
 
-                #更新集合
-                temp_list.remove(minUser)
+                # 更新集合
                 tempR = tempR | minUserSet
+                temp_list.remove(minUser)
                 # tempR_value = sm.setValueCompute(taskSet,tempR)
 
                 minPricePerValue, minMarginalValue, minUser, minUserSet, minUserBid = Argmin(temp_list, R, userBid,
@@ -130,14 +133,18 @@ def PaymentScheme(R, groupList, userPayment, userBid, taskSet, userTaskSet, tota
                                                                                              userTaskSet,
                                                                                              totalTaskNum)
                 # print("性价比最高的user为：", minUser, "报价为：", round(userBid[minUser], 2), "边际价值为：", minMarginalValue, "\n")
-            v_i_tempRPrime=sm.setValueCompute(taskSet, T_i&tempR)
-            if b_i<=v_i_tempRPrime:
-                p_i = max(p_i,v_i_tempRPrime)
-            userPayment[user]=p_i
+            v_i_tempRPrime = sm.setValueCompute(taskSet, T_i & tempR)
+            if b_i <= v_i_tempRPrime:
+                p_i = max(p_i, v_i_tempRPrime)
+            userPayment[user] = p_i
             # print(userPayment[i],"\n")
             # else:
             #     userPayment[i] = setValueCompute(taskSet, T_i - tempR)
-        print("当前user paymenmt为：", userPayment[user], "\n")
+        print(userPayment[user], "\n")
+    temp = 0
+    for item in groupList:
+        temp = temp + userPayment[item]
+    print("当前user paymenmt为：", temp, "\n")
     # print("当前分组payment：",userPayment,"\n")
     return userPayment
 
@@ -146,27 +153,32 @@ def SybilAlg(taskSet, userCost, userTaskSet, totalTaskNum, totalUserNum, userTas
     # 初始化相关参数
     # budget: B
     finalValue = 0
-    taskNum=len(taskSet)
+    taskNum = len(taskSet)
     # 全局被选择的任务集合
     R = set()
     # 全局winner集合
     S_w = set()
     # 全局payment向量
     userPayment = np.zeros((totalUserNum,), dtype=np.float)
-    # 记录全局winner选择的序列
-    winnerSequence=[]
-
+    # 计算当前的payment value的关系；设置两个中间向量temp1和temp2
+    temp1, temp2 = 0, 0
+    tempR = set()
+    # 记录value-payment相关行的行列
+    tempValue = np.array([])
+    tempPayment = np.array([])
     # 将所有的user进行分组，分别得到：分组后的dict；每个user的task数量array；每个user的总报价array；
     print("---开始将user进行分组---", "\n")
     groupDict, userTaskSize, userBid = sm.Group(userCost, userTaskSet, totalUserNum, userTaskNumDis)
     # print("分组结果为：", groupDict,"\n")
 
     # 从任务数量最高的组进行循环
-    i=0
-    while i <userTaskNumDis and len(R)!=taskNum:
+    i = 0
+    while i < userTaskNumDis and len(R) != taskNum:
+        # 初始化当前winner选择的序列
+        winnerSequence = []
         # 选择可能是task size最大的组
         groupList = groupDict[userTaskNumDis - i]
-        print("考虑分组", userTaskNumDis - i,"\n")
+        print("考虑分组", userTaskNumDis - i,groupList, "\n")
         # 备份一些不需要立即更新的参数，便于在计算payment使用：
         tempR = copy.deepcopy(R)
         # tempS_w=copy.deepcopy(S_w)
@@ -174,17 +186,31 @@ def SybilAlg(taskSet, userCost, userTaskSet, totalTaskNum, totalUserNum, userTas
 
         length = len(groupList)
         # 判断这个组里有没有user
-        if length != 0:
+        if length > 0:
             # 选择winner，传入备用参数，同时更新全局参数
-            R, S_w, winnerSequence = WinnerSelection(R, S_w, winnerSequence, groupList, userBid, taskSet, userTaskSet, totalTaskNum)
+            R, S_w, winnerSequence = WinnerSelection(R, S_w, winnerSequence, groupList, userBid, taskSet, userTaskSet,
+                                                     totalTaskNum)
             # 计算payment值，使用之前设置的备份参数
             userPayment = PaymentScheme(tempR, tempGroupList, userPayment, userBid, taskSet, userTaskSet,
                                         totalTaskNum)
-        # groupSet = set(groupList)
-        # if (not (groupSet.issubset(S_w))):
-        #     break
-        print("此次分组的费用", userPayment, "\n")
-        i=i+1
+
+        # 计算当前的payment value的关系；设置两个中间向量temp1和temp2
+        for user in winnerSequence:
+            tempR = tempR | sm.getUserTaskSet(user, userTaskSet, totalTaskNum)
+            temp1 = sm.setValueCompute(taskSet, tempR)
+            temp2 = temp2 + userPayment[user]
+
+            tempValue = np.append(tempValue, [temp1])
+            tempPayment = np.append(tempPayment, [temp2])
+        for user in tempGroupList:
+            # tempR = tempR | sm.getUserTaskSet(user, userTaskSet, totalTaskNum)
+            # temp1 = temp2 + sm.setValueCompute(taskSet, tempR)
+            temp2 = temp2 + userPayment[user]
+            if user not in winnerSequence:
+                tempValue = np.append(tempValue, [temp1])
+                tempPayment = np.append(tempPayment, [temp2])
+        # print("此次分组的费用", userPayment, "\n")
+        i = i + 1
     # 计算最终buyer的收益
     finalValue = sm.setValueCompute(taskSet, R)
     # totalUtility = 0
@@ -193,24 +219,32 @@ def SybilAlg(taskSet, userCost, userTaskSet, totalTaskNum, totalUserNum, userTas
     #         totalUtility = totalUtility + userPayment[i] - len(getUserTaskSet(i, userTaskSet, totalTaskNum)) * userCost[
     #             i]
 
-    return userPayment, finalValue, S_w, winnerSequence
+    return userPayment, finalValue, S_w,tempValue,tempPayment
 
 
 if __name__ == '__main__':
+    reNum = 1
+    budget = 300
+    totalTaskNum = 150
+    taskValueDis = 5
+    totalUserNum = 200
+    userCosPerValueDis = 5
+    userTaskNumDis = 5
+
     # reNum = 20
-    # budget = 200
+    # budget = 400
+    # totalTaskNum = 150
+    # taskValueDis = 5
+    # totalUserNum = 200
+    # userCosPerValueDis = 10
+    # userTaskNumDis = 5
+
+    # budget = 120
     # totalTaskNum = 150
     # taskValueDis = 5
     # totalUserNum = 300
     # userCosPerValueDis = 10
     # userTaskNumDis = 5
-
-    budget = 120
-    totalTaskNum = 150
-    taskValueDis = 5
-    totalUserNum = 300
-    userCosPerValueDis = 10
-    userTaskNumDis = 5
     # budget, totalTaskNum, taskValueDis, totalUserNum, userCosPerValueDis, userTaskNumDis = InitialSetting(20, 20, 30,10, 2.5, 4)
 
     Data = dp.DataGenerate(budget, totalTaskNum, taskValueDis, totalUserNum, userCosPerValueDis, userTaskNumDis)
@@ -220,23 +254,22 @@ if __name__ == '__main__':
     userTaskSet, userCost = Data.UserTaskSet()
     # print("usercost",userCost)
     # u_w, R, p, totalValue = SM(budget, taskSet, userTaskSet, userCost)
-    userPayment, finalValue, S_w ,winnerSequence= SybilAlg(taskSet, userCost, userTaskSet, totalTaskNum, totalUserNum, userTaskNumDis)
-
+    userPayment, finalValue, S_w, value, payment = SybilAlg(taskSet, userCost, userTaskSet, totalTaskNum, totalUserNum,
+                                                            userTaskNumDis)
 
     # print("payment sequence", userPayment,"\n")
-    value =np.array([])
-    payment = np.array([])
-    totalPayment=0
-    R=set()
-    for winner in winnerSequence:
-        task=sm.getUserTaskSet(winner,userTaskSet,totalTaskNum)
-        R=R|task
-        v=sm.setValueCompute(taskSet,R)
-        totalPayment=totalPayment+userPayment[winner]
-        # print("(value,totalpayment:",v,totalPayment)
-        #添加此时的value-payment关系组
-        value=np.append(value,np.array([v]))
-        payment = np.append(payment, np.array([totalPayment]))
+
+    # totalPayment = 0
+    # R = set()
+    # for winner in winnerSequence:
+    #     task = sm.getUserTaskSet(winner, userTaskSet, totalTaskNum)
+    #     R = R | task
+    #     v = sm.setValueCompute(taskSet, R)
+    #     totalPayment = totalPayment + userPayment[winner]
+    #     # print("(value,totalpayment:",v,totalPayment)
+    #     # 添加此时的value-payment关系组
+    #     value = np.append(value, np.array([v]))
+    #     payment = np.append(payment, np.array([totalPayment]))
 
     # 画图-platformUtility
     plt.figure()

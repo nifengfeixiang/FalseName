@@ -106,6 +106,8 @@ def WinnerSelection(B, R, q, S_w, groupList, userBid, taskSet, userTaskSet, tota
     #判断当前是否已经已经没有可以选择的user
     if minMarginalValue==0:
         return R, S_w, q
+    #计算user的task value
+    userValue=setValueCompute(taskSet,minUserSet)
     # 选择user i 后的任务集合
     RcupT_i_set = R | minUserSet
     # 选择user i 后的任务集合价值
@@ -114,8 +116,8 @@ def WinnerSelection(B, R, q, S_w, groupList, userBid, taskSet, userTaskSet, tota
     # print("性价比最高的user为：", minUser,"报价为：",round(userBid[minUser]),"边际价值为：",minMarginalValue,"value R是",tempR_value)
     # print("边际价值单价为：",minPricePerValue,"此时q_max为：",q,"此时B/R为：",round(B / tempR_value,2))
     # 循环遍历所有的当前组中的所有user
-    while (minPricePerValue <= round(B / tempR_value,2) and q <= round(B / tempR_value,2) and len(
-            temp_list) != 0 and tempR_value <= B and userBid[minUser] <= minMarginalValue):
+    while (minPricePerValue <= (B / tempR_value) and q <= (B / tempR_value) and len(
+            temp_list) != 0 and userBid[minUser] <= userValue):
         temp_list.remove(minUser)
         q = max(q, minPricePerValue)
         R = RcupT_i_set
@@ -125,6 +127,7 @@ def WinnerSelection(B, R, q, S_w, groupList, userBid, taskSet, userTaskSet, tota
                                                                                      userTaskSet, totalTaskNum)
         if minMarginalValue == 0:
             return R, S_w, q
+        userValue = setValueCompute(taskSet, minUserSet)
         RcupT_i_set = R | minUserSet
         tempR_value = setValueCompute(taskSet, RcupT_i_set)
         # print("当前的R集合为：", R)
@@ -159,12 +162,13 @@ def PaymentScheme(B, R, q, S_w, groupList, userPayment, userBid, taskSet, userTa
                 if minMarginalValue == 0:
                     userPayment[i] = setValueCompute(taskSet, T_i - tempR)
                 else:
+                    userValue = setValueCompute(taskSet, minUserSet)
                     RcupT_i_set = tempR | minUserSet
                     tempR_value = setValueCompute(taskSet, RcupT_i_set)
 
                     # 循环遍历
-                    while (minPricePerValue <= round(B / tempR_value) and q_prime <= round(B / tempR_value) and len(
-                            temp_list) != 0 and tempR_value <= B and userBid[minUser] <= minMarginalValue):
+                    while (minPricePerValue <= (B / tempR_value) and q_prime <= (B / tempR_value) and len(
+                            temp_list) != 0 and  userBid[minUser] <= userValue ):
                         v_i_tempR = setValueCompute(taskSet, T_i - tempR)
                         p_i = max(p_i, min(v_i_tempR * min(minPricePerValue, round(B / tempR_value)), v_i_tempR))
                         temp_list.remove(minUser)
@@ -176,6 +180,7 @@ def PaymentScheme(B, R, q, S_w, groupList, userPayment, userBid, taskSet, userTa
                                                                                                      totalTaskNum)
                         if minMarginalValue == 0:
                             break
+                        userValue = setValueCompute(taskSet, minUserSet)
                         RcupT_i_set = tempR | minUserSet
                         tempR_value = setValueCompute(taskSet, RcupT_i_set)
                     p_i = max(p_i, setValueCompute(taskSet, T_i - tempR))
@@ -237,19 +242,20 @@ def SingleMindedAlg(B, taskSet, userCost, userTaskSet, totalTaskNum, totalUserNu
 
 
 if __name__ == '__main__':
-    # budget = 400
-    # totalTaskNum = 150
-    # taskValueDis = 5
-    # totalUserNum = 100
-    # userCosPerValueDis = 2.5
-    # userTaskNumDis = 5
-
-    budget = 120
+    reNum = 1
+    budget = 300
     totalTaskNum = 150
     taskValueDis = 5
     totalUserNum = 200
-    userCosPerValueDis = 2.5
+    userCosPerValueDis = 5
     userTaskNumDis = 5
+
+    # budget = 120
+    # totalTaskNum = 150
+    # taskValueDis = 5
+    # totalUserNum = 200
+    # userCosPerValueDis = 2.5
+    # userTaskNumDis = 5
     # budget, totalTaskNum, taskValueDis, totalUserNum, userCosPerValueDis, userTaskNumDis = InitialSetting(20, 20, 30,10, 2.5, 4)
 
     Data = dp.DataGenerate(budget, totalTaskNum, taskValueDis, totalUserNum, userCosPerValueDis, userTaskNumDis)

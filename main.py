@@ -8,6 +8,8 @@ import copy
 import matplotlib.pyplot as plt
 import pylab as pl
 import math
+from numba import jit
+
 
 def controlUser(budget, taskSet, userCost, userTaskSet, totalTaskNum, indexUserNum, userTaskNumDis, userSetDict,
                 userSetSubsetDict):
@@ -295,7 +297,7 @@ def controlBudget(indexBudget, taskSet, userCost, userTaskSet, totalTaskNum, tot
 
 def doControlBudget(reNum, maxBudget, totalTaskNum, taskValueDis, totalUserNum, userCosPerValueDis, userTaskNumDis):
     # user 考虑的组数(user 考虑100-300，每次增加20)
-    indexBudget = int(((maxBudget - 40) / 40) + 1)
+    indexBudget = int(((maxBudget - 20) / 20) + 1)
     SM_platformUtility_1, SM_platformUtility_2, MM_platformUtility_2, GM_platformUtility_2, \
     SM_averageUtility_2, MM_averageUtility_2 = np.zeros((indexBudget,),
                                                         dtype=np.float), np.zeros(
@@ -407,22 +409,23 @@ def compareBudget(indexBudget, taskSet, userCost, userTaskSet, totalTaskNum, tot
         # Y_2 = np.append(Y_2, np.array([averageUtility_MM]))
 
     #计算infocom方法SPIM-S
-    userPayment_IN, finalValue_IN, S_w_IN, winnerSequence_IN=wpg.SybilAlg(taskSet, userCost, userTaskSet, totalTaskNum, totalUserNum, userTaskNumDis)
+    userPayment_IN, finalValue_IN, S_w_IN, value_IN,payment_IN=wpg.SybilAlg(taskSet, userCost, userTaskSet, totalTaskNum, totalUserNum, userTaskNumDis)
     # print("payment sequence", userPayment,"\n")
-    value = np.array([])
-    payment = np.array([])
-    totalPayment = 0
-    R = set()
-    for winner in winnerSequence_IN:
-        task = SM.getUserTaskSet(winner, userTaskSet, totalTaskNum)
-        R = R | task
-        v = SM.setValueCompute(taskSet, R)
-        totalPayment = totalPayment + userPayment_IN[winner]
-        # print("(value,totalpayment:",v,totalPayment)
-        # 添加此时的value-payment关系组
-        value = np.append(value, np.array([v]))
-        payment = np.append(payment, np.array([totalPayment]))
-    return x_1, y_1, y_2, y_3, value, payment
+    # value = np.array([])
+    # payment = np.array([])
+    # totalPayment = 0
+    # R = set()
+    #
+    # for winner in winnerSequence_IN:
+    #     task = SM.getUserTaskSet(winner, userTaskSet, totalTaskNum)
+    #     R = R | task
+    #     v = SM.setValueCompute(taskSet, R)
+    #     totalPayment = totalPayment + userPayment_IN[winner]
+    #     # print("(value,totalpayment:",v,totalPayment)
+    #     # 添加此时的value-payment关系组
+    #     value = np.append(value, np.array([v]))
+    #     payment = np.append(payment, np.array([totalPayment]))
+    return x_1, y_1, y_2, y_3, value_IN, payment_IN
 
 
 def doCompareBudget(reNum, maxBudget, totalTaskNum, taskValueDis, totalUserNum, userCosPerValueDis, userTaskNumDis):
@@ -523,12 +526,19 @@ if __name__ == '__main__':
     #
     # doControlBudget(reNum, budget, totalTaskNum, taskValueDis, totalUserNum, userCosPerValueDis, userTaskNumDis)
 
-    reNum = 1
-    budget = 320
+    # reNum = 1
+    # budget = 800
+    # totalTaskNum = 150
+    # taskValueDis = 5
+    # totalUserNum = 200
+    # userCosPerValueDis = 10
+    # userTaskNumDis = 6
+    reNum = 5
+    budget = 400
     totalTaskNum = 150
     taskValueDis = 5
     totalUserNum = 200
-    userCosPerValueDis = 10
+    userCosPerValueDis = 5
     userTaskNumDis = 5
 
     doCompareBudget(reNum, budget, totalTaskNum, taskValueDis, totalUserNum, userCosPerValueDis, userTaskNumDis)
