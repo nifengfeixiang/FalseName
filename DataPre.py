@@ -77,7 +77,7 @@ class DataGenerate:
         # genetate the cost
         userCost = np.zeros((self.totalUserNum,), dtype=np.float)
         for i in range(self.totalUserNum):
-            userCost[i] = round(uniform.rvs(0, self.userCostPerValueDis, 1)[0], 2)
+            userCost[i] = round(uniform.rvs(1, self.userCostPerValueDis, 1)[0], 2)
 
         return userTaskSet, userCost
 
