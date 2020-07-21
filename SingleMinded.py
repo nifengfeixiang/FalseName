@@ -102,7 +102,7 @@ def WinnerSelection(B, R, q, groupList, userBid, taskSet, userTaskSet, totalTask
     # 选出当前性价比最高的user；
     minPricePerValue, minMarginalValue, minUser, minUserSet, minUserBid = Argmin(temp_list, R, userBid, taskSet,
                                                                               userTaskSet, totalTaskNum)
-    print("性价比最高的user为：", minUser, "报价为：", round(userBid[minUser],2), "边际价值为：", minPricePerValue, "用户的task集合为：",minUserSet,"当前已经选择的集合数量为", len(R),"\n")
+    print("性价比最高的user为：", minUser, "报价为：", round(userBid[minUser],2), "边际价值为：",minMarginalValue,"边际单位价值为：", minPricePerValue, "用户的task集合为：",minUserSet,"当前已经选择的集合数量为", len(R),"\n")
 
     #判断当前是否已经已经没有可以选择的user
     if minMarginalValue==0:
@@ -117,7 +117,7 @@ def WinnerSelection(B, R, q, groupList, userBid, taskSet, userTaskSet, totalTask
     print("当前总体budget/value的值为：",tempR_value, round(B / tempR_value, 2), "\n")
     # 进行winner选择，循环遍历所有的当前组中的所有user
     while (minPricePerValue <= (B / tempR_value) and q <= (B / tempR_value) and len(
-            temp_list) != 0):
+            temp_list) != 0 and userBid[minUser]<= minMarginalValue):
         #tempR_value<=B, minUserBid<=v_{j}条件先不添加
         temp_list.remove(minUser)
         q = max(q, minPricePerValue)
@@ -129,7 +129,7 @@ def WinnerSelection(B, R, q, groupList, userBid, taskSet, userTaskSet, totalTask
         minPricePerValue, minMarginalValue, minUser, minUserSet, minUserBid = Argmin(temp_list, R, userBid, taskSet,
                                                                                      userTaskSet, totalTaskNum)
 
-        print("性价比最高的user为：", minUser, "报价为：", round(userBid[minUser],2), "边际价值为：", minPricePerValue, "用户的task集合为：",
+        print("性价比最高的user为：", minUser, "报价为：", round(userBid[minUser],2), "边际价值为：",minMarginalValue,"边际单位价值为：", minPricePerValue, "用户的task集合为：",
               minUserSet, "当前已经选择的集合数量为", len(R), "\n")
         if minMarginalValue == 0:
             print("边际价值为0，无可选择的winner；\n")
@@ -143,7 +143,7 @@ def WinnerSelection(B, R, q, groupList, userBid, taskSet, userTaskSet, totalTask
         #       tempR_value)
         # print("边际价值单价为：", minPricePerValue, "此时q_max为：", q, "此时B/R为：", round(B / tempR_value,2) )
     # 返回更新后的R,S_w,q
-    print("------结束当前组选择winner------------")
+    print("------结束当前组选择winner------------\n")
     return R, S_w, q
 
 
@@ -178,7 +178,7 @@ def PaymentScheme(B, R, q, S_w, groupList, userPayment, userBid, taskSet, userTa
 
                     # 循环遍历
                     while (minPricePerValue <= (B / tempR_value) and q_prime <= (B / tempR_value) and len(
-                            temp_list) != 0 ):
+                            temp_list) != 0 and userBid[minUser]<= minMarginalValue):
                         #and  userBid[minUser] <= userValue
                         v_i_tempR = setValueCompute(taskSet, T_i - tempR)
                         p_i = max(p_i, min(v_i_tempR * min(minPricePerValue, round(B / tempR_value)), v_i_tempR))
@@ -199,7 +199,7 @@ def PaymentScheme(B, R, q, S_w, groupList, userPayment, userBid, taskSet, userTa
                     userPayment[i] = p_i
             else:
                 userPayment[i] = setValueCompute(taskSet, T_i - tempR)
-        # print("当前user paymenmt为：", userPayment[i], "\n")
+        print("当前user payment为：",i, userPayment[i], "\n")
     # print("当前分组payment：",userPayment,"\n")
     return userPayment
 
@@ -243,9 +243,9 @@ def SingleMindedAlg(B, taskSet, userCost, userTaskSet, totalTaskNum, totalUserNu
             S_w=S_w|tempS_w
             # 计算payment值，使用之前设置的备份参数
             userPayment=PaymentScheme(B, tempR, tempQ, S_w, tempGroupListForPayment, userPayment, userBid, taskSet, userTaskSet, totalTaskNum)
-            groupSet=set(groupList)
-            if (not (groupSet.issubset(tempS_w))):
-                break
+            # groupSet=set(groupList)
+            # if (not (groupSet.issubset(tempS_w))):
+            #     break
         # 释放深度拷贝的参数
 
     # 计算最终buyer的收益

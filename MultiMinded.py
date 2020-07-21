@@ -2,7 +2,7 @@ import DataPre as dp
 import numpy as np
 import copy
 import math
-from numba import jit
+# from numba import jit
 
 # 就算某个任务集合的总体价值；
 def setValueCompute(taskSet, set):

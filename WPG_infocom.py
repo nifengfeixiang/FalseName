@@ -61,7 +61,7 @@ def WinnerSelection(R, S_w, winnerSequence, groupList, userBid, taskSet, userTas
     # print("性价比最高的user为：", minUser,"报价为：",round(userBid[minUser]),"边际价值为：",minMarginalValue,"value R是",tempR_value)
     # print("边际价值单价为：",minPricePerValue,"此时q_max为：",q,"此时B/R为：",round(B / tempR_value,2))
     # 循环遍历所有的当前组中的所有user
-    while (minUserBid <= userTaskValue and len(temp_list) != 0):
+    while (minUserBid <= minMarginalValue and len(temp_list) != 0):
         temp_list.remove(minUser)
         R = R | minUserSet
         # print("当前被选择winner为：",minUser,"\n")
@@ -93,15 +93,18 @@ def PaymentScheme(R, groupList, userPayment, userBid, taskSet, userTaskSet, tota
         print("计算user", user, "的payment:")
 
         tempR = copy.deepcopy(R)
+
         p_i = 0
         # user i 的任务集合
         T_i = sm.getUserTaskSet(user, userTaskSet, totalTaskNum)
+        print("T_i", T_i, "\n")
         # user i 的报价
         b_i = userBid[user]
         # 去除user i
         temp_list = copy.deepcopy(groupList)
         temp_list.remove(user)
-
+        #去除之后的list为：
+        print("list wei :",temp_list,"\n")
         # 判断去除user后的list是否为空；
         if (len(temp_list) != 0):
             # 选出当前性价比最高的user；
@@ -112,21 +115,18 @@ def PaymentScheme(R, groupList, userPayment, userBid, taskSet, userTaskSet, tota
             #     userPayment[i] = sm.setValueCompute(taskSet, T_i - tempR)
             # else:
             # 循环遍历
-            # print("性价比最高的user为：", minUser, "报价为：", round(userBid[minUser], 2), "边际价值为：", minMarginalValue, "\n")
+            print("性价比最高的user为：", minUser, "报价为：", round(userBid[minUser], 2), "边际价值为：", minMarginalValue, "\n")
             while (len(temp_list) != 0 and len(tempR) != totalTaskNum):
-                if minUserBid > sm.setValueCompute(taskSet, minUserSet):
+                if minUserBid > minMarginalValue:
                     break
-
-                v_i_tempR = sm.setValueCompute(taskSet, T_i & tempR)
-                if minMarginalValue == 0:
-                    p_i = max(p_i, v_i_tempR)
-                else:
-                    p_i = max(p_i, min(v_i_tempR * round(minUserBid / minMarginalValue, 2), v_i_tempR))
+                v_i_tempR = sm.setValueCompute(taskSet, T_i - tempR)
+                p_i = max(p_i, min(v_i_tempR * (minUserBid / minMarginalValue), v_i_tempR))
+                print("p_i", v_i_tempR,minUserBid / minMarginalValue)
 
                 # 更新集合
                 tempR = tempR | minUserSet
                 temp_list.remove(minUser)
-                # tempR_value = sm.setValueCompute(taskSet,tempR)
+                # tempR_value = sm.setValueCompute(taskSet,temv_i_tempRpR)
 
                 minPricePerValue, minMarginalValue, minUser, minUserSet, minUserBid = Argmin(temp_list, R, userBid,
                                                                                              taskSet,
@@ -223,14 +223,21 @@ def SybilAlg(taskSet, userCost, userTaskSet, totalTaskNum, totalUserNum, userTas
 
 
 if __name__ == '__main__':
-    reNum = 1
-    budget = 300
-    totalTaskNum = 150
-    taskValueDis = 5
-    totalUserNum = 200
-    userCosPerValueDis = 5
-    userTaskNumDis = 5
+    # reNum = 1
+    # budget = 300
+    # totalTaskNum = 150
+    # taskValueDis = 5
+    # totalUserNum = 200
+    # userCosPerValueDis = 5
+    # userTaskNumDis = 5
 
+    reNum = 1
+    budget = 200
+    totalTaskNum = 200
+    taskValueDis = 5
+    totalUserNum = 50
+    userCosPerValueDis = 10
+    userTaskNumDis = 5
     # reNum = 20
     # budget = 400
     # totalTaskNum = 150
