@@ -88,11 +88,13 @@ def MultiMindedAlg(B, taskSet, userCost,  totalUserNum,userSetDict, userSetSubse
     userA, userP = userPaymentDetermination(taskSet, userCost, totalUserNum, userSetSubsetDict)
 
     # 将所有user的备用A_i按照价值排序
+    tempTotalValue=0
     userA_iSetValue = {}
     for user in range(totalUserNum):
         task_set = userA[user]
         value = setValueCompute(taskSet, task_set)
         userA_iSetValue[user] = value
+        tempTotalValue=tempTotalValue+value
 
     # 首先将所有的user的A_i task value 排序；
     items = userA_iSetValue.items()
@@ -131,21 +133,23 @@ def MultiMindedAlg(B, taskSet, userCost,  totalUserNum,userSetDict, userSetSubse
                 totalPayment = totalPayment + userP[i]
                 totalUtility=totalUtility+userP[i]-len(userA[i])*userCost[i]
                 R=R|userA[i]
+                # print(len(R),"set R:",R)
         else:
             userA[i] = set()
             B = 0
     finalValue=setValueCompute(taskSet,R)
+    # print("finalvalue and total value", finalValue,tempTotalValue)
 
 
     return round(totalPayment,2), finalValue, S_w, round(totalUtility/totalUserNum,2)
 
 
 if __name__ == '__main__':
-    budget = 100
+    budget = 400
     totalTaskNum = 150
-    taskValueDis = 20
-    totalUserNum = 300
-    userCosPerValueDis = 10
+    taskValueDis = 10
+    totalUserNum = 200
+    userCosPerValueDis = 5
     userTaskNumDis = 5
     # budget, totalTaskNum, taskValueDis, totalUserNum, userCosPerValueDis, userTaskNumDis = InitialSetting(20, 20, 30,10, 2.5, 4)
 

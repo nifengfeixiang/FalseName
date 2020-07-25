@@ -371,7 +371,7 @@ def doControlBudget(reNum, maxBudget, totalTaskNum, taskValueDis, totalUserNum, 
 
 def compareBudget(indexBudget, taskSet, userCost, userTaskSet, totalTaskNum, totalUserNum, userTaskNumDis, userSetDict,
                   userSetSubsetDict):
-    initUser = 40
+    initBudget = 20
     x_1 = np.array([])
     y_1 = np.array([])
     y_2 = np.array([])
@@ -380,7 +380,7 @@ def compareBudget(indexBudget, taskSet, userCost, userTaskSet, totalTaskNum, tot
     # Y_2 = np.array([])
     # 从50到800
     for i in range(indexBudget):
-        budget = 40 + i * initUser
+        budget = 40 + i * initBudget
         print("budget为:", budget)
 
         userPayment_SM, finalValue_SM, S_w_SM, averageUtility_SM = SM.SingleMindedAlg(budget / 2, taskSet,
@@ -430,7 +430,7 @@ def compareBudget(indexBudget, taskSet, userCost, userTaskSet, totalTaskNum, tot
 
 def doCompareBudget(reNum, maxBudget, totalTaskNum, taskValueDis, totalUserNum, userCosPerValueDis, userTaskNumDis):
     # user 考虑的组数(user 考虑100-300，每次增加20)
-    indexBudget = int(((maxBudget - 40) / 40) + 1)
+    indexBudget = int(((maxBudget - 40) / 20) + 1)
     budget, finalValue_SM, finalValue_MM, finalValue_GM, finalValue_SPIM_S=np.zeros((indexBudget,), dtype=np.float),np.zeros((indexBudget,), dtype=np.float), np.zeros((indexBudget,),
                                                                                             dtype=np.float), np.zeros(
         (indexBudget,), dtype=np.float), np.zeros((indexBudget,),
@@ -479,11 +479,21 @@ def doCompareBudget(reNum, maxBudget, totalTaskNum, taskValueDis, totalUserNum, 
              label='SPBF-SM')  # use pylab to plot x and y : Give your plots names
     plt.plot(budget / reNum, finalValue_MM / reNum, 'g', marker='.', label='SPBF-MM')
     plt.plot(budget / reNum, finalValue_GM / reNum, 'b', marker='*', label='GM-SM')
-    plt.plot(budget / reNum, finalValue_SPIM_S / reNum, 'y', marker='o', label='SPIM-S')
+    plt.plot(budget / reNum, finalValue_SPIM_S / reNum, 'y', marker='o', label='SPIM-SM')
 
-    plt.title('Impact of budget')  # give plot a title
-    plt.xlabel('Budget')  # make axis labels
-    plt.ylabel('Total Value')
+
+
+    # 设置输出的图片大小figsize = 11,9figure, ax = plt.subplots(figsize=figsize)
+    # #在同一幅图片上画两条折线A,=plt.plot(x1,y1,'-r',label='A',linewidth=5.0)B,=plt.plot(x2,y2,'b-.',label='B',linewidth=5.0)
+    # #设置图例并且设置图例的字体及大小font1 = {'family' : 'Times New Roman','weight' : 'normal','size'   : 23,}
+    # legend = plt.legend(handles=[A,B],prop=font1)
+    # #设置坐标刻度值的大小以及刻度值的字体plt.tick_params(labelsize=23)labels = ax.get_xticklabels() + ax.get_yticklabels()
+    # [label.set_fontname('Times New Roman') for label in labels]
+    # #设置横纵坐标的名称以及对应字体格式
+    font2 = {'family': 'Times New Roman','weight': 'normal','size': 16,}
+    plt.title('Impact of budget',font2)  # give plot a title
+    plt.xlabel('Total Payment',font2)  # make axis labels
+    plt.ylabel('Total Value',font2)
 
     # pl.xlim(40, 2000)  # set axis limits
     # pl.ylim(35.0, 50.0)
@@ -533,10 +543,10 @@ if __name__ == '__main__':
     # totalUserNum = 200
     # userCosPerValueDis = 10
     # userTaskNumDis = 6
-    reNum = 1
-    budget = 400
+    reNum = 10
+    budget = 300
     totalTaskNum = 150
-    taskValueDis = 5
+    taskValueDis = 10
     totalUserNum = 200
     userCosPerValueDis = 5
     userTaskNumDis = 5

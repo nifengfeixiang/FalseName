@@ -131,7 +131,7 @@ def GreedyAlgSM(B, taskSet, userCost, userTaskSet, totalTaskNum, totalUserNum):
         # tempR_value = setValueCompute(taskSet, RcupT_i_set)
     totalValue = setValueCompute(taskSet, R)
     # 返回更新后的R,S_w,q
-    return userPayment, totalValue, S_w, round(averageUtility / totalUserNum)
+    return userPayment, totalValue, S_w, round(averageUtility / totalUserNum,2)
 
 
 if __name__ == '__main__':
