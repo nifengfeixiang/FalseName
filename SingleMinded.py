@@ -250,6 +250,7 @@ def SingleMindedAlg(B, taskSet, userCost, userTaskSet, totalTaskNum, totalUserNu
             #     break
         # 释放深度拷贝的参数
 
+
     # 计算最终buyer的收益
     finalValue = setValueCompute(taskSet, R)
     totalUtility=0

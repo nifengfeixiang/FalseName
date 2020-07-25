@@ -543,7 +543,7 @@ if __name__ == '__main__':
     # totalUserNum = 200
     # userCosPerValueDis = 10
     # userTaskNumDis = 6
-    reNum = 10
+    reNum = 1
     budget = 300
     totalTaskNum = 150
     taskValueDis = 10
