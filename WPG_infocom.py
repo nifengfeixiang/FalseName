@@ -235,9 +235,9 @@ if __name__ == '__main__':
     reNum = 1
     budget = 600
     totalTaskNum = 150
-    taskValueDis = 10
+    taskValueDis = 20
     totalUserNum = 200
-    userCosPerValueDis = 5
+    userCosPerValueDis = 10
     userTaskNumDis =5
     # reNum = 20
     # budget = 400
@@ -266,6 +266,7 @@ if __name__ == '__main__':
                                                             userTaskNumDis)
 
     print("finalvalue", finalValue,"\n")
+    print("S_w", S_w, "\n")
 
     # totalPayment = 0
     # R = set()
