@@ -140,10 +140,10 @@ def PaymentScheme(R, S_w, groupList, userPayment, userBid, taskSet, userTaskSet,
                 # print(userPayment[i],"\n")
                 # else:
                 #     userPayment[i] = setValueCompute(taskSet, T_i - tempR)
-            # print(userPayment[user], "\n")
-    temp = 0
-    for item in groupList:
-        temp = temp + userPayment[item]
+            # print("user:",user,userPayment[user], "\n")
+    # temp = 0
+    # for item in groupList:
+    #     temp = temp + userPayment[item]
     # print("当前user paymenmt为：", temp, "\n")
     # print("当前分组payment：",userPayment,"\n")
     return userPayment
@@ -196,19 +196,19 @@ def SybilAlg(taskSet, userCost, userTaskSet, totalTaskNum, totalUserNum, userTas
 
         # 计算当前的payment value的关系；设置两个中间向量temp1和temp2
         for user in winnerSequence:
+            # print("测试：",user,userPayment[user])
             tempR = tempR | sm.getUserTaskSet(user, userTaskSet, totalTaskNum)
             temp1 = sm.setValueCompute(taskSet, tempR)
             temp2 = temp2 + userPayment[user]
-
             tempValue = np.append(tempValue, [temp1])
             tempPayment = np.append(tempPayment, [temp2])
-        for user in tempGroupList:
-            # tempR = tempR | sm.getUserTaskSet(user, userTaskSet, totalTaskNum)
-            # temp1 = temp2 + sm.setValueCompute(taskSet, tempR)
-            temp2 = temp2 + userPayment[user]
-            if user not in winnerSequence:
-                tempValue = np.append(tempValue, [temp1])
-                tempPayment = np.append(tempPayment, [temp2])
+        # for user in tempGroupList:
+        #     # tempR = tempR | sm.getUserTaskSet(user, userTaskSet, totalTaskNum)
+        #     # temp1 = temp2 + sm.setValueCompute(taskSet, tempR)
+        #     temp2 = temp2 + userPayment[user]
+        #     if user not in winnerSequence:
+        #         tempValue = np.append(tempValue, [temp1])
+        #         tempPayment = np.append(tempPayment, [temp2])
         # print("此次分组的费用", userPayment, "\n")
         i = i + 1
     # 计算最终buyer的收益
@@ -219,7 +219,8 @@ def SybilAlg(taskSet, userCost, userTaskSet, totalTaskNum, totalUserNum, userTas
     #     if (userPayment[i] != 0):
     #         totalUtility = totalUtility + userPayment[i] - len(getUserTaskSet(i, userTaskSet, totalTaskNum)) * userCost[
     #             i]
-
+    # print(tempValue,"\n")
+    # print(tempPayment,"\n")
     return userPayment, finalValue, S_w,tempValue,tempPayment
 
 
@@ -232,7 +233,7 @@ if __name__ == '__main__':
     # userCosPerValueDis = 5
     # userTaskNumDis = 5
 
-    reNum = 1
+    reNum = 10
     budget = 600
     totalTaskNum = 150
     taskValueDis = 20
