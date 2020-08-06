@@ -101,13 +101,18 @@ def MultiMindedAlg(B, taskSet,userTaskSet,totalTaskNum, userCost,  totalUserNum,
     userA, userP = userPaymentDetermination(taskSet, userCost, totalUserNum, userSetSubsetDict)
 
     # ---------首先按照SPIM_MM中的方法进行选择
+    totalUtility_SPIM=0
+    finalValue_SPIM=0
     temp_R1, temp_payment1 = set(), 0
     for user in range(totalUserNum):
         if userP[user]>0:
             temp_payment1 += userP[user]
             if (temp_payment1)<=B:
-                temp_R1 = temp_R1 | getUserTaskSet(user, userTaskSet, totalTaskNum)
-                tempValue_SPIM_MM = np.append(tempValue_SPIM_MM, np.array([setValueCompute(taskSet, temp_R1)]))
+                temp_R1 = temp_R1 | userA[user]
+                finalValue_SPIM=setValueCompute(taskSet, temp_R1)
+                totalUtility_SPIM=totalUtility_SPIM+userP[user]-len(userA[user])*userCost[user]
+                # print("test,",totalUtility_SPIM/totalUserNum,"\n")
+                tempValue_SPIM_MM = np.append(tempValue_SPIM_MM, np.array([finalValue_SPIM]))
                 tempPayment_SPIM_MM = np.append(tempPayment_SPIM_MM, np.array([temp_payment1]))
             else:
                 break
@@ -157,26 +162,27 @@ def MultiMindedAlg(B, taskSet,userTaskSet,totalTaskNum, userCost,  totalUserNum,
                 # print("分配的任务集以及费用：", userA[i],userP[i],"\n")
                 totalPayment = totalPayment + userP[i]
                 totalUtility=totalUtility+userP[i]-len(userA[i])*userCost[i]
+                # print("test-MM,", totalUtility / totalUserNum, "\n")
                 R=R|userA[i]
                 # print(len(R),"set R:",R)
         else:
             userA[i] = set()
             B = 0
-    finalValue=setValueCompute(taskSet,R)
+    finalValue_MM=setValueCompute(taskSet,R)
     # print("finalvalue and total value", finalValue,tempTotalValue)
 
     temp_R, temp_payment = set(), 0
     for user in S_w:
-        temp_R = temp_R | getUserTaskSet(user, userTaskSet, totalTaskNum)
+        temp_R = temp_R | userA[user]
         temp_payment = temp_payment + userP[user]
         tempValue_MM = np.append(tempValue_MM, np.array([setValueCompute(taskSet, temp_R)]))
         tempPayment_MM = np.append(tempPayment_MM, np.array([temp_payment]))
 
-    return round(totalPayment,2), finalValue, S_w, round(totalUtility/totalUserNum,2),tempValue_MM,tempPayment_MM,tempValue_SPIM_MM,tempPayment_SPIM_MM
+    return round(totalPayment,2), finalValue_MM,finalValue_SPIM, S_w, round(totalUtility/totalUserNum,3),round(totalUtility_SPIM/totalUserNum,3),tempValue_MM,tempPayment_MM,tempValue_SPIM_MM,tempPayment_SPIM_MM
 
 
 if __name__ == '__main__':
-    budget = 600
+    budget = 200
     totalTaskNum = 150
     taskValueDis = 20
     totalUserNum = 200
@@ -193,14 +199,14 @@ if __name__ == '__main__':
     userSetSubsetDict=Data.userSetSubsetDictCompute(userSetDict)
 
     # u_w, R, p, totalValue = SM(budget, taskSet, userTaskSet, userCost)
-    userPayment, finalValue, S_w ,averageUtility,value,payment,value1,payment1= MultiMindedAlg(budget, taskSet,userTaskSet,totalTaskNum, userCost,  totalUserNum,userSetDict, userSetSubsetDict)
+    userPayment, finalValue,finalValue_SPIM, S_w ,averageUtility,averageUtility_SPIM,value,payment,value1,payment1= MultiMindedAlg(budget, taskSet,userTaskSet,totalTaskNum, userCost,  totalUserNum,userSetDict, userSetSubsetDict)
 
     # print("taskSet:", taskSet, "\n")
     # print("userTaskSet:", userTaskSet, "\n")
     # print("userCost:", userCost, "\n")
     print("Winner:", S_w, "\n")
-    print("Final value:", finalValue)
+    print("Final value:", finalValue,finalValue_SPIM)
     print("Payment", userPayment)
-    print("averageUtility", averageUtility)
-    print(value,payment,"\n")
-    print(value1, payment1,"\n")
+    print("averageUtility", averageUtility,averageUtility_SPIM)
+    # print(value,payment,"\n")
+    # print(value1, payment1,"\n")

@@ -119,7 +119,7 @@ def WinnerSelection(B, R, q,groupList, userBid, taskSet, userTaskSet, totalTaskN
     # print("当前总体budget/value的值为：",tempR_value, round(B / tempR_value, 2), "\n")
     # 进行winner选择，循环遍历所有的当前组中的所有user
     while (minPricePerValue <= (B / tempR_value) and q <= (B / tempR_value) and len(
-            temp_list) != 0 and userBid[minUser]<= minMarginalValue):
+            temp_list) != 0 and userBid[minUser]<= minMarginalValue and tempR_value<=2*B):
         #tempR_value<=B, minUserBid<=v_{j}条件先不添加
 
         temp_list.remove(minUser)
@@ -181,7 +181,7 @@ def PaymentScheme(B, R, q, S_w, groupList, userPayment, userBid, taskSet, userTa
 
                     # 循环遍历
                     while (minPricePerValue <= (B / tempR_value) and q_prime <= (B / tempR_value) and len(
-                            temp_list) != 0 and userBid[minUser]<= minMarginalValue):
+                            temp_list) != 0 and userBid[minUser]<= minMarginalValue and tempR_value<=2*B):
                         #and  userBid[minUser] <= userValue
                         v_i_tempR = setValueCompute(taskSet, T_i - tempR)
                         p_i = max(p_i, min(v_i_tempR * min(minPricePerValue, round(B / tempR_value)), v_i_tempR))
@@ -255,7 +255,10 @@ def SingleMindedAlg(B, taskSet, userCost, userTaskSet, totalTaskNum, totalUserNu
         # 释放深度拷贝的参数
 
     # 计算最终buyer的收益
-    finalValue = setValueCompute(taskSet, R)
+    R_prime=set()
+    for item in S_w:
+        R_prime=R_prime|getUserTaskSet(item,userTaskSet,totalTaskNum)
+    finalValue = setValueCompute(taskSet, R_prime)
     totalUtility=0
     for i in range(totalUserNum):
         if(userPayment[i]!=0):
@@ -272,7 +275,7 @@ def SingleMindedAlg(B, taskSet, userCost, userTaskSet, totalTaskNum, totalUserNu
 
 if __name__ == '__main__':
     reNum = 1
-    budget = 600
+    budget = 200
     totalTaskNum = 150
     taskValueDis = 20
     totalUserNum = 300

@@ -149,7 +149,7 @@ def PaymentScheme(R, S_w, groupList, userPayment, userBid, taskSet, userTaskSet,
     return userPayment
 
 
-def SybilAlg(taskSet, userCost, userTaskSet, totalTaskNum, totalUserNum, userTaskNumDis):
+def SybilAlg(budget,taskSet, userCost, userTaskSet, totalTaskNum, totalUserNum, userTaskNumDis):
     # 初始化相关参数
     # budget: B
     finalValue = 0
@@ -213,15 +213,24 @@ def SybilAlg(taskSet, userCost, userTaskSet, totalTaskNum, totalUserNum, userTas
         i = i + 1
     # 计算最终buyer的收益
     finalValue = sm.setValueCompute(taskSet, R)
-    # print("final value:", finalValue,sm.setValueCompute(taskSet, taskSet))
-    # totalUtility = 0
-    # for i in range(totalUserNum):
-    #     if (userPayment[i] != 0):
-    #         totalUtility = totalUtility + userPayment[i] - len(getUserTaskSet(i, userTaskSet, totalTaskNum)) * userCost[
-    #             i]
-    # print(tempValue,"\n")
-    # print(tempPayment,"\n")
-    return userPayment, finalValue, S_w,tempValue,tempPayment
+    # print("final value",finalValue)
+
+    totalUtility = 0
+    totalPayment=0
+    S_w_prime=set()
+    R_prime=set()
+    for item in S_w:
+        totalPayment+=userPayment[item]
+        if totalPayment<=budget:
+            S_w_prime.add(item)
+            R_prime=R_prime|sm.getUserTaskSet(item,userTaskSet,totalTaskNum)
+        else:
+            break
+    finalValue_budget = sm.setValueCompute(taskSet,R_prime)
+    for item in S_w_prime:
+        totalUtility = totalUtility + userPayment[item] - len(sm.getUserTaskSet(item, userTaskSet, totalTaskNum)) * userCost[item]
+
+    return userPayment, finalValue_budget, S_w,round(totalUtility/totalUserNum,2),tempValue,tempPayment
 
 
 if __name__ == '__main__':
@@ -234,7 +243,7 @@ if __name__ == '__main__':
     # userTaskNumDis = 5
 
     reNum = 10
-    budget = 600
+    budget = 100
     totalTaskNum = 150
     taskValueDis = 20
     totalUserNum = 200
@@ -263,12 +272,12 @@ if __name__ == '__main__':
     userTaskSet, userCost = Data.UserTaskSet()
     # print("usercost",userCost)
     # u_w, R, p, totalValue = SM(budget, taskSet, userTaskSet, userCost)
-    userPayment, finalValue, S_w, value, payment = SybilAlg(taskSet, userCost, userTaskSet, totalTaskNum, totalUserNum,
+    userPayment, finalValue, S_w, averageUtility, value, payment = SybilAlg(budget,taskSet, userCost, userTaskSet, totalTaskNum, totalUserNum,
                                                             userTaskNumDis)
 
     print("finalvalue", finalValue,"\n")
     print("S_w", S_w, "\n")
-
+    print(averageUtility)
     # totalPayment = 0
     # R = set()
     # for winner in winnerSequence:

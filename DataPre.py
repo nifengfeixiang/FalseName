@@ -28,6 +28,11 @@ class DataGenerate:
         self.userCostPerValueDis=userCosPerValueDis
         self.userTaskNumDis=userTaskNumDis
 
+    def getUserSet(self,totalUserNum):
+        userSet=set()
+        for user in range(totalUserNum):
+            userSet.add(user+1)
+        return userSet
     def UniformDis(self, size, dis):
         """
         :param dis: distribution range
