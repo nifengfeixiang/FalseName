@@ -275,10 +275,10 @@ def SingleMindedAlg(B, taskSet, userCost, userTaskSet, totalTaskNum, totalUserNu
 
 if __name__ == '__main__':
     reNum = 1
-    budget = 200
+    budget = 600
     totalTaskNum = 150
     taskValueDis = 20
-    totalUserNum = 300
+    totalUserNum = 500
     userCosPerValueDis = 10
     userTaskNumDis = 5
 

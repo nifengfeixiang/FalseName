@@ -56,58 +56,80 @@ def getValuePaymentRelation(value_SM, payment_SM, maxValue, indexValue):
 
 def controlUser(budget, taskSet, userCost, userTaskSet, totalTaskNum, indexUserNum, userTaskNumDis, userSetDict,
                 userSetSubsetDict):
-    initUser = 50
+    initUser = 20
     x_1 = np.array([])
     y_1 = np.array([])
     y_2 = np.array([])
     y_3 = np.array([])
+    y_4 = np.array([])
+    y_5 = np.array([])
     Y_1 = np.array([])
     Y_2 = np.array([])
+    Y_3 = np.array([])
+    Y_4 = np.array([])
     # 从50到800
     for i in range(indexUserNum):
-        num = 50 + i * initUser
+        num = 100 + i * initUser
         print("user 数量为：:", num)
-        userCostTemp_1 = userCost[:num]
-        userTaskSetTemp_1 = userTaskSet
 
+        userCostTemp_1 = userCost[:num]
+        userTaskSetTemp_1 = userTaskSet[:, :num]
         userPayment_SM, finalValue_SM, S_w_SM, averageUtility_SM,value,payment = SM.SingleMindedAlg(budget / 2, taskSet,
                                                                                       userCostTemp_1,
                                                                                       userTaskSetTemp_1,
                                                                                       totalTaskNum, num,
                                                                                       userTaskNumDis)
         print("SM总价值：", finalValue_SM, "SM平均收益：", averageUtility_SM)
-        # userCostTemp_2 = userCost[:num]
-        # userTaskSetTemp_2 = userTaskSet[:, :num]
-        userPayment_MM, finalValue_MM, S_w_MM, averageUtility_MM,Value_MM,Payment_MM,Value_SPIM_MM,Payment_SPIM_MM = MM.MultiMindedAlg(budget, taskSet,userTaskSet,totalTaskNum, userCost, num,
+
+        userCostTemp_2 = userCost[:num]
+        userTaskSetTemp_2 = userTaskSet[:, :num]
+        userPayment_MM, finalValue_MM,finalValue_SPIM_MM, S_w_MM, averageUtility_MM,averageUtility_SPIM_MM,value1,payemnt1,value2,payment2 = MM.MultiMindedAlg(budget, taskSet,userTaskSetTemp_2,totalTaskNum, userCostTemp_2, num,
                                                                                      userSetDict, userSetSubsetDict)
         print("MM总价值：", finalValue_MM, "MM平均收益：", averageUtility_MM)
+        print("SPIM_MM总价值：", finalValue_SPIM_MM, "SPIM_MM平均收益：", averageUtility_SPIM_MM)
 
         userCostTemp_3 = userCost[:num]
         userTaskSetTemp_3 = userTaskSet[:, :num]
         userPayment_GM, finalValue_GM, S_w_GM, averageUtility_GM = GM.GreedyAlgSM(budget, taskSet, userCostTemp_3,
                                                                                   userTaskSetTemp_3, totalTaskNum,
                                                                                   num)
-        print("GM总价值：", finalValue_GM, "GM平均收益：", averageUtility_GM, "\n")
+        print("GM总价值：", finalValue_GM, "GM平均收益：", averageUtility_GM)
+
+        userCostTemp_4 = userCost[:num]
+        userTaskSetTemp_4 = userTaskSet[:, :num]
+        userPayment_SPIM_SM, finalValue_SPIM_SM, S_w_SPIM_SM, averageUtility_SPIM_SM, value_SPIM_SM, payment_SPIM_MM = wpg.SybilAlg(
+            budget, taskSet, userCostTemp_4, userTaskSetTemp_4,
+            totalTaskNum, num,
+            userTaskNumDis)
+        print("SPIM_SM总价值：", finalValue_SPIM_SM, "SPIM_SM平均收益：", averageUtility_SPIM_SM, "\n")
 
         x_1 = np.append(x_1, np.array([num]))
         y_1 = np.append(y_1, np.array([finalValue_SM]))
         y_2 = np.append(y_2, np.array([finalValue_MM]))
         y_3 = np.append(y_3, np.array([finalValue_GM]))
+        y_4 = np.append(y_4, np.array([finalValue_SPIM_SM]))
+        y_5 = np.append(y_5, np.array([finalValue_SPIM_MM]))
+
         Y_1 = np.append(Y_1, np.array([averageUtility_SM]))
         Y_2 = np.append(Y_2, np.array([averageUtility_MM]))
-    return x_1, y_1, y_2, y_3, Y_1, Y_2
+        Y_3 = np.append(Y_3, np.array([averageUtility_SPIM_SM]))
+        Y_4 = np.append(Y_4, np.array([averageUtility_SPIM_MM]))
+    return x_1, y_1, y_2, y_3, y_4, y_5, Y_1, Y_2, Y_3, Y_4
 
 
 def doControlUser(reNum, budget, totalTaskNum, taskValueDis, totalUserNum, userCosPerValueDis, userTaskNumDis):
     # user 考虑的组数(user 考虑100-300，每次增加20)
-    indexUserNum = int(((totalUserNum - 50) / 50) + 1)
+    indexUserNum = int(((totalUserNum - 100) / 20) + 1)
     SM_platformUtility_1, SM_platformUtility_2, MM_platformUtility_2, GM_platformUtility_2, \
-    SM_averageUtility_2, MM_averageUtility_2 = np.zeros((indexUserNum,),
-                                                        dtype=np.float), np.zeros(
+    SM_averageUtility_2, MM_averageUtility_2, SPIM_SM_platformUtility_2, SPIM_MM_platformUtility_2, SPIM_SM_averageUtility_2, SPIM_MM_averageUtility_2 = np.zeros(
+        (indexUserNum,),
+        dtype=np.float), np.zeros(
         (indexUserNum,), dtype=np.float), np.zeros((indexUserNum,), dtype=np.float), np.zeros((indexUserNum,),
                                                                                               dtype=np.float), np.zeros(
         (indexUserNum,), dtype=np.float), np.zeros((indexUserNum,),
-                                                   dtype=np.float)
+                                                   dtype=np.float), np.zeros((indexUserNum,), dtype=np.float), np.zeros(
+        (indexUserNum,), dtype=np.float), np.zeros((indexUserNum,), dtype=np.float), np.zeros((indexUserNum,),
+                                                                                              dtype=np.float)
     # 总共执行reNum组随机数据然后去平均值画图
     for i in range(reNum):
         print("重复组数：",i,"\n")
@@ -121,7 +143,7 @@ def doControlUser(reNum, budget, totalTaskNum, taskValueDis, totalUserNum, userC
         userSetDict = Data.userSetDictCompute(userTaskSet)
         userSetSubsetDict = Data.userSetSubsetDictCompute(userSetDict)
         # 控制user数量的图
-        SM_pu_1, SM_pu_2, MM_pu_2, GM_pu_2, SM_au_2, MM_au_2 = controlUser(budget,
+        SM_pu_1, SM_pu_2, MM_pu_2, GM_pu_2,SPIM_SM_pu_2,SPIM_MM_pu_2, SM_au_2, MM_au_2,SPIM_SM_au_2,SPIM_MM_au_2 = controlUser(budget,
                                                                            taskSet,
                                                                            userCost,
                                                                            userTaskSet,
@@ -134,11 +156,17 @@ def doControlUser(reNum, budget, totalTaskNum, taskValueDis, totalUserNum, userC
         # print("GM_platformUtility_1", GM_platformUtility_1, "\n")
 
         SM_platformUtility_1 = SM_platformUtility_1 + SM_pu_1
+
         SM_platformUtility_2 = SM_platformUtility_2 + SM_pu_2
         MM_platformUtility_2 = MM_platformUtility_2 + MM_pu_2
         GM_platformUtility_2 = GM_platformUtility_2 + GM_pu_2
+        SPIM_SM_platformUtility_2 = SPIM_SM_platformUtility_2 + SPIM_SM_pu_2
+        SPIM_MM_platformUtility_2 = SPIM_MM_platformUtility_2 + SPIM_MM_pu_2
+
         SM_averageUtility_2 = SM_averageUtility_2 + SM_au_2
         MM_averageUtility_2 = MM_averageUtility_2 + MM_au_2
+        SPIM_SM_averageUtility_2 = SPIM_SM_averageUtility_2 + SPIM_SM_au_2
+        SPIM_MM_averageUtility_2 = SPIM_MM_averageUtility_2 + SPIM_MM_au_2
 
         # print(SM_platformUtility_1,SM_platformUtility_2,MM_platformUtility_1,MM_platformUtility_2,SM_averageUtility_1,SM_averageUtility_2,MM_averageUtility_1,MM_averageUtility_2)
     # for i in range(indexUserNum):
@@ -150,18 +178,23 @@ def doControlUser(reNum, budget, totalTaskNum, taskValueDis, totalUserNum, userC
     # 画图-----------------------------platformUtility 柱状图；
 
 
-    bar_width = 0.25  # 条形宽度
+    bar_width = 0.15  # 条形宽度
     index_GM = np.arange(len(SM_platformUtility_1))  # 男生条形图的横坐标
-    index_MM = index_GM + bar_width  # 女生条形图的横坐标
-    index_SM = index_MM + bar_width  # 女生条形图的横坐标
+    index_SM = index_GM + bar_width  # 女生条形图的横坐标
+    index_SPIM_SM = index_SM + bar_width
+    index_MM = index_SPIM_SM + bar_width  # 女生条形图的横坐标
+    index_SPIM_MM = index_MM + bar_width
+
 
     # 使用两次 bar 函数画出两组条形图
     plt.bar(index_GM, height=GM_platformUtility_2 / reNum, width=bar_width, color='#FF6600', label='GM')
-    plt.bar(index_MM, height=MM_platformUtility_2 / reNum, width=bar_width, color='#339966', label='SPBF-MM')
-    plt.bar(index_SM, height=SM_platformUtility_2 / reNum, width=bar_width, color='#3366FF', label='SPBF-SM')
+    plt.bar(index_MM, height=MM_platformUtility_2 / reNum, width=bar_width, color='#339966', label='TBS-MM')
+    plt.bar(index_SM, height=SM_platformUtility_2 / reNum, width=bar_width, color='#3366FF', label='TBS-SM')
+    plt.bar(index_SPIM_SM, height=SPIM_SM_platformUtility_2 / reNum, width=bar_width, color='#55A868', label='SPIM-S')
+    plt.bar(index_SPIM_MM, height=SPIM_MM_platformUtility_2 / reNum, width=bar_width, color='#4C72B0', label='SPIM-M')
 
     plt.legend()  # 显示图例
-    plt.xticks(index_GM + bar_width, SM_platformUtility_1/reNum)
+    plt.xticks(index_GM + 2*bar_width, SM_platformUtility_1/reNum)
     plt.xlabel('Number of users',font2)  # make axis labels
     plt.ylabel('Platform Utility',font2)  # 纵坐标轴标题
     plt.title('Impact of users',font2)  # 图形标题
@@ -174,9 +207,11 @@ def doControlUser(reNum, budget, totalTaskNum, taskValueDis, totalUserNum, userC
     # ----------------画图-platformUtility
     plt.figure()
     plt.plot(SM_platformUtility_1 / reNum, SM_platformUtility_2 / reNum, 'r', marker='x',
-             label='SPBF-SM')  # use pylab to plot x and y : Give your plots names
-    plt.plot(SM_platformUtility_1 / reNum, MM_platformUtility_2 / reNum, 'g', marker='.', label='SPBF-MM')
+             label='TBS-SM')  # use pylab to plot x and y : Give your plots names
+    plt.plot(SM_platformUtility_1 / reNum, MM_platformUtility_2 / reNum, 'g', marker='.', label='TBS-MM')
     plt.plot(SM_platformUtility_1 / reNum, GM_platformUtility_2 / reNum, 'b', marker='*', label='GM')
+    plt.plot(SM_platformUtility_1 / reNum, SPIM_SM_platformUtility_2 / reNum, 'y', marker='o', label='SPIM-S')
+    plt.plot(SM_platformUtility_1 / reNum, SPIM_MM_platformUtility_2 / reNum, 'orange', marker=',', label='SPIM-M')
 
     plt.title('Impact of users',font2)  # give plot a title
     plt.xlabel('Number of users',font2)  # make axis labels
@@ -190,17 +225,21 @@ def doControlUser(reNum, budget, totalTaskNum, taskValueDis, totalUserNum, userC
 
 
     #-------------------------画图average-utility -bar
-    bar_width = 0.25  # 条形宽度
-    index_ave_SM = np.arange(len(SM_platformUtility_1))  # 男生条形图的横坐标
-    index_ave_MM = index_ave_SM + bar_width  # 女生条形图的横坐标
+    bar_width = 0.15  # 条形宽度
 
+    index_ave_SM = np.arange(len(SM_platformUtility_1))  # 男生条形图的横坐标
+    index_ave_SPIM_SM = index_ave_SM + bar_width
+    index_ave_MM = index_ave_SPIM_SM + bar_width  # 女生条形图的横坐标
+    index_ave_SPIM_MM = index_ave_MM + bar_width
 
     # 使用两次 bar 函数画出两组条形图
-    plt.bar(index_ave_SM, height=SM_averageUtility_2 / reNum, width=bar_width, color='#3366FF', label='SPBF-SM')
-    plt.bar(index_ave_MM, height=MM_averageUtility_2 / reNum, width=bar_width, color='#339966', label='SPBF-MM')
+    plt.bar(index_ave_SM, height=SM_averageUtility_2 / reNum, width=bar_width, color='#3366FF', label='TBS-SM')
+    plt.bar(index_ave_MM, height=MM_averageUtility_2 / reNum, width=bar_width, color='#339966', label='TBS-MM')
+    plt.bar(index_ave_SPIM_SM, height=SPIM_SM_averageUtility_2 / reNum, width=bar_width, color='#FF6600', label='SPIM-S')
+    plt.bar(index_ave_SPIM_MM, height=SPIM_MM_averageUtility_2 / reNum, width=bar_width, color='#993366', label='SPIM-M')
 
     plt.legend()  # 显示图例
-    plt.xticks(index_ave_SM + bar_width, SM_platformUtility_1 / reNum)
+    plt.xticks(index_ave_SM +1.5* bar_width, SM_platformUtility_1 / reNum)
     plt.title('Impact of users',font2)  # give plot a title
     plt.xlabel('Number of users',font2)  # make axis labels
     plt.ylabel('Average Utility',font2)
@@ -211,8 +250,10 @@ def doControlUser(reNum, budget, totalTaskNum, taskValueDis, totalUserNum, userC
     # 画图-averageUtility
     plt.figure()
     plt.plot(SM_platformUtility_1 / reNum, SM_averageUtility_2 / reNum, 'r', marker='x',
-             label='SPIM-SM')  # use pylab to plot x and y : Give your plots names
-    plt.plot(SM_platformUtility_1 / reNum, MM_averageUtility_2 / reNum, 'g', marker='.', label='SPIM-MM')
+             label='TBS-SM')  # use pylab to plot x and y : Give your plots names
+    plt.plot(SM_platformUtility_1 / reNum, MM_averageUtility_2 / reNum, 'g', marker='.', label='TBS-MM')
+    plt.plot(SM_platformUtility_1 / reNum, SPIM_SM_averageUtility_2 / reNum, 'y', marker='o', label='SPIM-S')
+    plt.plot(SM_platformUtility_1 / reNum, SPIM_MM_averageUtility_2 / reNum, 'orange', marker=',', label='SPIM-M')
 
     plt.title('Impact of users',font2)  # give plot a title
     plt.xlabel('Number of users',font2)  # make axis labels
@@ -240,7 +281,7 @@ def controlTask(budget, indexUserNum, taskValueDis, totalUserNum, userCosPerValu
     Y_4 = np.array([])
     # 从20到60
     for i in range(indexUserNum):
-        totalTaskNum = 120 + i * initTask
+        totalTaskNum = 60 + i * initTask
         print("task 数量为：:", totalTaskNum)
 
         Data = dp.DataGenerate(budget, totalTaskNum, taskValueDis, totalUserNum, userCosPerValueDis, userTaskNumDis)
@@ -293,7 +334,7 @@ def controlTask(budget, indexUserNum, taskValueDis, totalUserNum, userCosPerValu
 def doControlTask(reNum, budget, maxTaskNum, taskValueDis, totalUserNum, userCosPerValueDis, userTaskNumDis):
     # 初始设置参数
     # task 考虑的组数(user 考虑40-100，每次增加10)
-    indexTaskNum = int(((maxTaskNum - 120) / 20) + 1)
+    indexTaskNum = int(((maxTaskNum - 60) / 20) + 1)
     SM_platformUtility_1, SM_platformUtility_2, MM_platformUtility_2, GM_platformUtility_2, \
     SM_averageUtility_2, MM_averageUtility_2,SPIM_SM_platformUtility_2,SPIM_MM_platformUtility_2,SPIM_SM_averageUtility_2,SPIM_MM_averageUtility_2 = np.zeros((indexTaskNum,),
                                                         dtype=np.float), np.zeros(
@@ -333,6 +374,7 @@ def doControlTask(reNum, budget, maxTaskNum, taskValueDis, totalUserNum, userCos
     index_SM = index_MM + bar_width  # 女生条形图的横坐标
     index_SPIM_MM=index_SM+bar_width
     index_SPIM_SM = index_SPIM_MM + bar_width
+
     # 使用两次 bar 函数画出两组条形图
     plt.bar(index_GM, height=GM_platformUtility_2 / reNum, width=bar_width, color='#FF6600', label='GM')
     plt.bar(index_MM, height=MM_platformUtility_2 / reNum, width=bar_width, color='#339966', label='TBS-MM')
@@ -357,7 +399,7 @@ def doControlTask(reNum, budget, maxTaskNum, taskValueDis, totalUserNum, userCos
     plt.plot(SM_platformUtility_1 / reNum, MM_platformUtility_2 / reNum, 'g', marker='.', label='TBS-MM')
     plt.plot(SM_platformUtility_1 / reNum, GM_platformUtility_2 / reNum, 'b', marker='*', label='GM')
     plt.plot(SM_platformUtility_1 / reNum, SPIM_SM_platformUtility_2 / reNum, 'y', marker='o', label='SPIM-S')
-    plt.plot(SM_platformUtility_1 / reNum, SPIM_MM_platformUtility_2 / reNum, 'grey', marker=',', label='SPIM-M')
+    plt.plot(SM_platformUtility_1 / reNum, SPIM_MM_platformUtility_2 / reNum, 'orange', marker=',', label='SPIM-M')
 
     font2 = {'family': 'Times New Roman', 'weight': 'normal', 'size': 16, }
     plt.title('Impact of Tasks',font2)  # give plot a title
@@ -367,7 +409,8 @@ def doControlTask(reNum, budget, maxTaskNum, taskValueDis, totalUserNum, userCos
     # pl.xlim(10.0, 35.0)  # set axis limits
     # pl.ylim(35.0, 50.0)
     plt.legend()
-    plt.savefig("F:/Results/platformUtility_tasks.pdf")
+    string = time.strftime('%Y%m%d%H%M%S')
+    plt.savefig("F:/Results/platformUtility_tasks" + string + ".pdf")
     plt.show()  # show the plot on the screen
 
     # -------------------------画图average-utility -bar
@@ -381,11 +424,11 @@ def doControlTask(reNum, budget, maxTaskNum, taskValueDis, totalUserNum, userCos
     # 使用两次 bar 函数画出两组条形图
     plt.bar(index_ave_SM, height=SM_averageUtility_2 / reNum, width=bar_width, color='#3366FF', label='TBS-SM')
     plt.bar(index_ave_MM, height=MM_averageUtility_2 / reNum, width=bar_width, color='#339966', label='TBS-MM')
-    plt.bar(index_ave_SPIM_SM, height=SPIM_SM_averageUtility_2 / reNum, width=bar_width, color='#55A868', label='SPIM-S')
-    plt.bar(index_ave_SPIM_MM, height=SPIM_MM_averageUtility_2 / reNum, width=bar_width, color='#4C72B0', label='SPIM-M')
+    plt.bar(index_ave_SPIM_SM, height=SPIM_SM_averageUtility_2 / reNum, width=bar_width, color='#FF6600', label='SPIM-S')
+    plt.bar(index_ave_SPIM_MM, height=SPIM_MM_averageUtility_2 / reNum, width=bar_width, color='#993366', label='SPIM-M')
 
     plt.legend()  # 显示图例
-    plt.xticks(index_ave_SM + 2*bar_width, SM_platformUtility_1 / reNum)
+    plt.xticks(index_ave_SM + 1.5*bar_width, SM_platformUtility_1 / reNum)
     font2 = {'family': 'Times New Roman', 'weight': 'normal', 'size': 16, }
     plt.title('Impact of Tasks',font2)  # give plot a title
     plt.xlabel('Number of Tasks',font2)  # make axis labels
@@ -401,7 +444,7 @@ def doControlTask(reNum, budget, maxTaskNum, taskValueDis, totalUserNum, userCos
              label='TBS-SM')  # use pylab to plot x and y : Give your plots names
     plt.plot(SM_platformUtility_1 / reNum, MM_averageUtility_2 / reNum, 'g', marker='.', label='TBS-MM')
     plt.plot(SM_platformUtility_1 / reNum, SPIM_SM_averageUtility_2 / reNum, 'y', marker='o', label='SPIM-S')
-    plt.plot(SM_platformUtility_1 / reNum, SPIM_MM_averageUtility_2 / reNum, 'grey', marker=',', label='SPIM-M')
+    plt.plot(SM_platformUtility_1 / reNum, SPIM_MM_averageUtility_2 / reNum, 'orange', marker=',', label='SPIM-M')
 
     font2 = {'family': 'Times New Roman', 'weight': 'normal', 'size': 16, }
     plt.title('Impact of Tasks',font2)  # give plot a title
@@ -411,7 +454,8 @@ def doControlTask(reNum, budget, maxTaskNum, taskValueDis, totalUserNum, userCos
     # pl.xlim(10.0, 35.0)  # set axis limits
     # pl.ylim(35.0, 50.0)
     plt.legend()
-    plt.savefig("F:/Results/avgUtility_tasks.pdf")
+    string = time.strftime('%Y%m%d%H%M%S')
+    plt.savefig("F:/Results/avgUtility_tasks" + string + ".pdf")
     plt.show()  # show the plot on the screen
 
 
@@ -422,8 +466,12 @@ def controlBudget(indexBudget, taskSet, userCost, userTaskSet, totalTaskNum, tot
     y_1 = np.array([])
     y_2 = np.array([])
     y_3 = np.array([])
+    y_4 = np.array([])
+    y_5 = np.array([])
     Y_1 = np.array([])
     Y_2 = np.array([])
+    Y_3 = np.array([])
+    Y_4 = np.array([])
     # 从50到800
     for i in range(indexBudget):
         budget = 120 + i * initUser
@@ -435,9 +483,8 @@ def controlBudget(indexBudget, taskSet, userCost, userTaskSet, totalTaskNum, tot
                                                                                       totalTaskNum, totalUserNum,
                                                                                       userTaskNumDis)
         print("SM总价值：", finalValue_SM, "SM平均收益：", averageUtility_SM)
-        # userCostTemp_2 = userCost[:num]
-        # userTaskSetTemp_2 = userTaskSet[:, :num]
-        userPayment_MM, finalValue_MM, S_w_MM, averageUtility_MM,value1,payment1,value2,payment2 = MM.MultiMindedAlg(budget, taskSet, userTaskSet,totalTaskNum,userCost,
+
+        userPayment_MM, finalValue_MM,finalValue_SPIM_MM, S_w_MM, averageUtility_MM,averageUtility_SPIM_MM,value1,payemnt1,value2,payment2 = MM.MultiMindedAlg(budget, taskSet, userTaskSet,totalTaskNum,userCost,
                                                                                      totalUserNum,
                                                                                      userSetDict, userSetSubsetDict)
         print("MM总价值：", finalValue_MM, "MM平均收益：", averageUtility_MM)
@@ -445,27 +492,41 @@ def controlBudget(indexBudget, taskSet, userCost, userTaskSet, totalTaskNum, tot
         userPayment_GM, finalValue_GM, S_w_GM, averageUtility_GM = GM.GreedyAlgSM(budget, taskSet, userCost,
                                                                                   userTaskSet, totalTaskNum,
                                                                                   totalUserNum)
-        print("GM总价值：", finalValue_GM, "GM平均收益：", averageUtility_GM, "\n")
+        print("GM总价值：", finalValue_GM, "GM平均收益：", averageUtility_GM)
+
+        userPayment_SPIM_SM, finalValue_SPIM_SM, S_w_SPIM_SM, averageUtility_SPIM_SM, value_SPIM_SM, payment_SPIM_MM = wpg.SybilAlg(
+            budget, taskSet, userCost, userTaskSet,
+            totalTaskNum, totalUserNum,
+            userTaskNumDis)
+        print("SPIM_SM总价值：", finalValue_SPIM_SM, "SPIM_SM平均收益：", averageUtility_SPIM_SM, "\n")
 
         x_1 = np.append(x_1, np.array([budget]))
         y_1 = np.append(y_1, np.array([finalValue_SM]))
         y_2 = np.append(y_2, np.array([finalValue_MM]))
         y_3 = np.append(y_3, np.array([finalValue_GM]))
+        y_4 = np.append(y_4, np.array([finalValue_SPIM_SM]))
+        y_5 = np.append(y_5, np.array([finalValue_SPIM_MM]))
+
         Y_1 = np.append(Y_1, np.array([averageUtility_SM]))
         Y_2 = np.append(Y_2, np.array([averageUtility_MM]))
-    return x_1, y_1, y_2, y_3, Y_1, Y_2
+        Y_3 = np.append(Y_3, np.array([averageUtility_SPIM_SM]))
+        Y_4 = np.append(Y_4, np.array([averageUtility_SPIM_MM]))
+    return x_1, y_1, y_2, y_3, y_4, y_5, Y_1, Y_2, Y_3, Y_4
 
 
 def doControlBudget(reNum, maxBudget, totalTaskNum, taskValueDis, totalUserNum, userCosPerValueDis, userTaskNumDis):
     # user 考虑的组数(user 考虑100-300，每次增加20)
     indexBudget = int(((maxBudget - 120) / 40) + 1)
     SM_platformUtility_1, SM_platformUtility_2, MM_platformUtility_2, GM_platformUtility_2, \
-    SM_averageUtility_2, MM_averageUtility_2 = np.zeros((indexBudget,),
-                                                        dtype=np.float), np.zeros(
+    SM_averageUtility_2, MM_averageUtility_2, SPIM_SM_platformUtility_2, SPIM_MM_platformUtility_2, SPIM_SM_averageUtility_2, SPIM_MM_averageUtility_2 = np.zeros(
+        (indexBudget,),
+        dtype=np.float), np.zeros(
         (indexBudget,), dtype=np.float), np.zeros((indexBudget,), dtype=np.float), np.zeros((indexBudget,),
-                                                                                            dtype=np.float), np.zeros(
+                                                                                              dtype=np.float), np.zeros(
         (indexBudget,), dtype=np.float), np.zeros((indexBudget,),
-                                                  dtype=np.float)
+                                                   dtype=np.float), np.zeros((indexBudget,), dtype=np.float), np.zeros(
+        (indexBudget,), dtype=np.float), np.zeros((indexBudget,), dtype=np.float), np.zeros((indexBudget,),
+                                                                                              dtype=np.float)
     # 总共执行reNum组随机数据然后去平均值画图
     for i in range(reNum):
         print("------------------重复次数为-----------：", i, "\n")
@@ -479,7 +540,7 @@ def doControlBudget(reNum, maxBudget, totalTaskNum, taskValueDis, totalUserNum, 
         userSetDict = Data.userSetDictCompute(userTaskSet)
         userSetSubsetDict = Data.userSetSubsetDictCompute(userSetDict)
         # 控制user数量的图
-        SM_pu_1, SM_pu_2, MM_pu_2, GM_pu_2, SM_au_2, MM_au_2 = controlBudget(indexBudget, taskSet, userCost,
+        SM_pu_1, SM_pu_2, MM_pu_2, GM_pu_2,SPIM_SM_pu_2,SPIM_MM_pu_2, SM_au_2, MM_au_2,SPIM_SM_au_2,SPIM_MM_au_2 = controlBudget(indexBudget, taskSet, userCost,
                                                                              userTaskSet, totalTaskNum, totalUserNum,
                                                                              userTaskNumDis, userSetDict,
                                                                              userSetSubsetDict)
@@ -488,28 +549,38 @@ def doControlBudget(reNum, maxBudget, totalTaskNum, taskValueDis, totalUserNum, 
         # print("GM_platformUtility_1", GM_platformUtility_1, "\n")
 
         SM_platformUtility_1 = SM_platformUtility_1 + SM_pu_1
+
         SM_platformUtility_2 = SM_platformUtility_2 + SM_pu_2
         MM_platformUtility_2 = MM_platformUtility_2 + MM_pu_2
         GM_platformUtility_2 = GM_platformUtility_2 + GM_pu_2
+        SPIM_SM_platformUtility_2 = SPIM_SM_platformUtility_2 + SPIM_SM_pu_2
+        SPIM_MM_platformUtility_2 = SPIM_MM_platformUtility_2 + SPIM_MM_pu_2
+
         SM_averageUtility_2 = SM_averageUtility_2 + SM_au_2
         MM_averageUtility_2 = MM_averageUtility_2 + MM_au_2
+        SPIM_SM_averageUtility_2 = SPIM_SM_averageUtility_2 + SPIM_SM_au_2
+        SPIM_MM_averageUtility_2 = SPIM_MM_averageUtility_2 + SPIM_MM_au_2
 
         # print(SM_platformUtility_1,SM_platformUtility_2,MM_platformUtility_1,MM_platformUtility_2,SM_averageUtility_1,SM_averageUtility_2,MM_averageUtility_1,MM_averageUtility_2)
 
     font2 = {'family': 'Times New Roman', 'weight': 'normal', 'size': 16, }
     # 画图-----------------------------platformUtility 柱状图；
-    bar_width = 0.25  # 条形宽度
+    bar_width = 0.15  # 条形宽度
     index_GM = np.arange(len(SM_platformUtility_1))  # 男生条形图的横坐标
     index_MM = index_GM + bar_width  # 女生条形图的横坐标
     index_SM = index_MM + bar_width  # 女生条形图的横坐标
+    index_SPIM_MM = index_SM + bar_width
+    index_SPIM_SM = index_SPIM_MM + bar_width
 
     # 使用两次 bar 函数画出两组条形图
     plt.bar(index_GM, height=GM_platformUtility_2 / reNum, width=bar_width, color='#FF6600', label='GM')
-    plt.bar(index_MM, height=MM_platformUtility_2 / reNum, width=bar_width, color='#339966', label='SPBF-MM')
-    plt.bar(index_SM, height=SM_platformUtility_2 / reNum, width=bar_width, color='#3366FF', label='SPBF-SM')
+    plt.bar(index_MM, height=MM_platformUtility_2 / reNum, width=bar_width, color='#339966', label='TBS-MM')
+    plt.bar(index_SM, height=SM_platformUtility_2 / reNum, width=bar_width, color='#3366FF', label='TBS-SM')
+    plt.bar(index_SPIM_SM, height=SPIM_SM_platformUtility_2 / reNum, width=bar_width, color='#55A868', label='SPIM-S')
+    plt.bar(index_SPIM_MM, height=SPIM_MM_platformUtility_2 / reNum, width=bar_width, color='#4C72B0', label='SPIM-M')
 
     plt.legend()  # 显示图例
-    plt.xticks(index_GM + bar_width, SM_platformUtility_1 / reNum)
+    plt.xticks(index_GM + 2*bar_width, SM_platformUtility_1 / reNum)
     plt.title('Impact of budget',font2)  # give plot a title
     plt.xlabel('Budget',font2)  # make axis labels
     plt.ylabel('Platform Utility',font2)
@@ -520,9 +591,11 @@ def doControlBudget(reNum, maxBudget, totalTaskNum, taskValueDis, totalUserNum, 
     # 画图-platformUtility
     plt.figure()
     plt.plot(SM_platformUtility_1 / reNum, SM_platformUtility_2 / reNum, 'r', marker='x',
-             label='SPBF-SM')  # use pylab to plot x and y : Give your plots names
-    plt.plot(SM_platformUtility_1 / reNum, MM_platformUtility_2 / reNum, 'g', marker='.', label='SPBF-MM')
+             label='TBS-SM')  # use pylab to plot x and y : Give your plots names
+    plt.plot(SM_platformUtility_1 / reNum, MM_platformUtility_2 / reNum, 'g', marker='.', label='TBS-MM')
     plt.plot(SM_platformUtility_1 / reNum, GM_platformUtility_2 / reNum, 'b', marker='*', label='GM')
+    plt.plot(SM_platformUtility_1 / reNum, SPIM_SM_platformUtility_2 / reNum, 'y', marker='o', label='SPIM-S')
+    plt.plot(SM_platformUtility_1 / reNum, SPIM_MM_platformUtility_2 / reNum, 'orange', marker=',', label='SPIM-M')
 
     font2 = {'family': 'Times New Roman', 'weight': 'normal', 'size': 16, }
     plt.title('Impact of budget',font2)  # give plot a title
@@ -532,20 +605,27 @@ def doControlBudget(reNum, maxBudget, totalTaskNum, taskValueDis, totalUserNum, 
     # pl.xlim(10.0, 35.0)  # set axis limits
     # pl.ylim(35.0, 50.0)
     plt.legend()
-    plt.savefig("F:/Results/platformUtility_budget.pdf")
+    string = time.strftime('%Y%m%d%H%M%S')
+    plt.savefig("F:/Results/platformUtility_budget"+string+".pdf")
     plt.show()  # show the plot on the screen
 
     # -------------------------画图average-utility -bar
-    bar_width = 0.25  # 条形宽度
+    bar_width = 0.15  # 条形宽度
     index_ave_SM = np.arange(len(SM_platformUtility_1))  # 男生条形图的横坐标
     index_ave_MM = index_ave_SM + bar_width  # 女生条形图的横坐标
+    index_ave_SPIM_MM = index_ave_MM + bar_width
+    index_ave_SPIM_SM = index_ave_SPIM_MM + bar_width
 
     # 使用两次 bar 函数画出两组条形图
-    plt.bar(index_ave_SM, height=SM_averageUtility_2 / reNum, width=bar_width, color='#3366FF', label='SPBF-SM')
-    plt.bar(index_ave_MM, height=MM_averageUtility_2 / reNum, width=bar_width, color='#339966', label='SPBF-MM')
+    plt.bar(index_ave_SM, height=SM_averageUtility_2 / reNum, width=bar_width, color='#3366FF', label='TBS-SM')
+    plt.bar(index_ave_MM, height=MM_averageUtility_2 / reNum, width=bar_width, color='#339966', label='TBS-MM')
+    plt.bar(index_ave_SPIM_SM, height=SPIM_SM_averageUtility_2 / reNum, width=bar_width, color='#FF6600',
+            label='SPIM-S')
+    plt.bar(index_ave_SPIM_MM, height=SPIM_MM_averageUtility_2 / reNum, width=bar_width, color='#993366',
+            label='SPIM-M')
 
     plt.legend()  # 显示图例
-    plt.xticks(index_ave_SM + bar_width, SM_platformUtility_1 / reNum)
+    plt.xticks(index_ave_SM +1.5* bar_width, SM_platformUtility_1 / reNum)
     plt.title('Impact of budget',font2)  # give plot a title
     plt.xlabel('Budget',font2)  # make axis labels
     plt.ylabel('Average Utility',font2)
@@ -556,8 +636,10 @@ def doControlBudget(reNum, maxBudget, totalTaskNum, taskValueDis, totalUserNum, 
     # 画图-averageUtility
     plt.figure()
     plt.plot(SM_platformUtility_1 / reNum, SM_averageUtility_2 / reNum, 'r', marker='x',
-             label='SM')  # use pylab to plot x and y : Give your plots names
-    plt.plot(SM_platformUtility_1 / reNum, MM_averageUtility_2 / reNum, 'g', marker='.', label='MM')
+             label='TBS-SM')  # use pylab to plot x and y : Give your plots names
+    plt.plot(SM_platformUtility_1 / reNum, MM_averageUtility_2 / reNum, 'g', marker='.', label='TBS-MM')
+    plt.plot(SM_platformUtility_1 / reNum, SPIM_SM_averageUtility_2 / reNum, 'y', marker='o', label='SPIM-S')
+    plt.plot(SM_platformUtility_1 / reNum, SPIM_MM_averageUtility_2 / reNum, 'orange', marker=',', label='SPIM-M')
 
     plt.title('Impact of budget',font2)  # give plot a title
     plt.xlabel('Budget',font2)  # make axis labels
@@ -566,7 +648,8 @@ def doControlBudget(reNum, maxBudget, totalTaskNum, taskValueDis, totalUserNum, 
     # pl.xlim(10.0, 35.0)  # set axis limits
     # pl.ylim(35.0, 50.0)
     plt.legend()
-    plt.savefig("F:/Results/avgUtility_budget.pdf")
+    string = time.strftime('%Y%m%d%H%M%S')
+    plt.savefig("F:/Results/avgUtility_budget"+string+".pdf")
     plt.show()  # show the plot on the screen
 
 
@@ -737,8 +820,8 @@ def doCompareBudget(reNum, maxBudget, totalTaskNum, taskValueDis, totalUserNum, 
     plt.plot(controlValue_Index , controlValue_SM_S / reNum, 'r', marker='x',
              label='TBS-SM')  # use pylab to plot x and y : Give your plots names
     plt.plot(controlValue_Index, controlValue_SM_M / reNum, 'y', marker='.', label='TBS-MM')
-    plt.plot(controlValue_Index , controlValue_SPIM_S / reNum, 'g', marker='.', label='SPIM-S')
-    plt.plot(controlValue_Index, controlValue_SPIM_M / reNum, 'b', marker='.', label='SPIM-M')
+    plt.plot(controlValue_Index , controlValue_SPIM_S / reNum, 'g', marker='*', label='SPIM-S')
+    plt.plot(controlValue_Index, controlValue_SPIM_M / reNum, 'b', marker='o', label='SPIM-M')
 
 
     # 设置输出的图片大小figsize = 11,9figure, ax = plt.subplots(figsize=figsize)
@@ -1027,20 +1110,20 @@ def falsenameValidate(maxNum,maxBudget,totalTaskNum,taskValueDis, totalUserNum, 
 
 if __name__ == '__main__':
     # # 初始设置参数
-    # reNum = 100
-    # budget = 200
-    # totalTaskNum = 150
-    # taskValueDis = 20
-    # totalUserNum =300
-    # userCosPerValueDis = 10
-    # userTaskNumDis = 5
-    #
-    # doControlUser(reNum, budget, totalTaskNum, taskValueDis, totalUserNum, userCosPerValueDis, userTaskNumDis)
-    #
+    reNum = 1
+    budget = 300
+    totalTaskNum = 150
+    taskValueDis = 12
+    totalUserNum =200
+    userCosPerValueDis = 10
+    userTaskNumDis = 5
+
+    doControlUser(reNum, budget, totalTaskNum, taskValueDis, totalUserNum, userCosPerValueDis, userTaskNumDis)
+    # #
     # # 初始设置参数
-    # reNum = 1
-    # budget = 200
-    # totalTaskNum = 200
+    # reNum = 50
+    # budget = 300
+    # totalTaskNum = 160
     # taskValueDis = 20
     # totalUserNum = 300
     # userCosPerValueDis =10
@@ -1048,7 +1131,7 @@ if __name__ == '__main__':
     # maxTaskNum = totalTaskNum
     # doControlTask(reNum, budget, maxTaskNum, taskValueDis, totalUserNum, userCosPerValueDis, userTaskNumDis)
     #
-    # reNum = 100
+    # reNum = 50
     # budget = 400
     # totalTaskNum = 150
     # taskValueDis = 20
@@ -1066,18 +1149,18 @@ if __name__ == '__main__':
     # userCosPerValueDis = 10
     # userTaskNumDis = 6
 
-    reNum = 20
-    budget = 600
-    totalTaskNum = 150
-    taskValueDis = 20
-    totalUserNum = 200
-    userCosPerValueDis = 10
-    userTaskNumDis = 5
-    maxValue = 700
-    indexValue = 50
-
-    doCompareBudget(reNum, budget, totalTaskNum, taskValueDis, totalUserNum, userCosPerValueDis, userTaskNumDis,
-                    maxValue, indexValue)
+    # reNum = 20
+    # budget = 600
+    # totalTaskNum = 150
+    # taskValueDis = 20
+    # totalUserNum = 200
+    # userCosPerValueDis = 10
+    # userTaskNumDis = 5
+    # maxValue = 700
+    # indexValue = 50
+    #
+    # doCompareBudget(reNum, budget, totalTaskNum, taskValueDis, totalUserNum, userCosPerValueDis, userTaskNumDis,
+    #                 maxValue, indexValue)
 
     # reNum = 10
     # budget = 600

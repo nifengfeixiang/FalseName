@@ -3,19 +3,8 @@
   <component name="ChangeListManager">
     <list default="true" id="242b3e37-1113-46d3-a6fb-a677294b3b4c" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/DataPre.py" beforeDir="false" afterPath="$PROJECT_DIR$/DataPre.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/MultiMinded.py" beforeDir="false" afterPath="$PROJECT_DIR$/MultiMinded.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/SingleMinded.py" beforeDir="false" afterPath="$PROJECT_DIR$/SingleMinded.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/WPG_infocom.py" beforeDir="false" afterPath="$PROJECT_DIR$/WPG_infocom.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/avgUtility_budget.pdf" beforeDir="false" afterPath="$PROJECT_DIR$/avgUtility_budget.pdf" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/avgUtility_tasks.pdf" beforeDir="false" afterPath="$PROJECT_DIR$/avgUtility_tasks.pdf" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/avgUtility_users.pdf" beforeDir="false" afterPath="$PROJECT_DIR$/avgUtility_users.pdf" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/main.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/platformUtility_budget.pdf" beforeDir="false" afterPath="$PROJECT_DIR$/platformUtility_budget.pdf" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/platformUtility_tasks.pdf" beforeDir="false" afterPath="$PROJECT_DIR$/platformUtility_tasks.pdf" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/platformUtility_users.pdf" beforeDir="false" afterPath="$PROJECT_DIR$/platformUtility_users.pdf" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/sybil_payment.pdf" beforeDir="false" afterPath="$PROJECT_DIR$/sybil_payment.pdf" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/test.py" beforeDir="false" afterPath="$PROJECT_DIR$/test.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -185,7 +174,7 @@
       <workItem from="1596073315381" duration="4195000" />
       <workItem from="1596159885644" duration="1264000" />
       <workItem from="1596178454114" duration="72864000" />
-      <workItem from="1596705583573" duration="4438000" />
+      <workItem from="1596705583573" duration="13747000" />
     </task>
     <task id="LOCAL-00001" summary="change some settings">
       <created>1594453239692</created>
@@ -243,7 +232,14 @@
       <option name="project" value="LOCAL" />
       <updated>1596282916383</updated>
     </task>
-    <option name="localTasksCounter" value="9" />
+    <task id="LOCAL-00009" summary="upadate 8.1">
+      <created>1596717576632</created>
+      <option name="number" value="00009" />
+      <option name="presentableId" value="LOCAL-00009" />
+      <option name="project" value="LOCAL" />
+      <updated>1596717576632</updated>
+    </task>
+    <option name="localTasksCounter" value="10" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -258,30 +254,30 @@
     <option name="LAST_COMMIT_MESSAGE" value="upadate 8.1" />
   </component>
   <component name="WindowStateProjectService">
-    <state x="884" y="260" key="CommitChangelistDialog2" timestamp="1596282914546">
+    <state x="884" y="260" key="CommitChangelistDialog2" timestamp="1596717574439">
       <screen x="0" y="0" width="2560" height="1400" />
     </state>
-    <state x="884" y="260" key="CommitChangelistDialog2/0.0.2560.1400@0.0.2560.1400" timestamp="1596282914546" />
+    <state x="884" y="260" key="CommitChangelistDialog2/0.0.2560.1400@0.0.2560.1400" timestamp="1596717574439" />
     <state x="1061" y="441" key="FileChooserDialogImpl" timestamp="1596272714039">
       <screen x="0" y="0" width="2560" height="1400" />
     </state>
     <state x="1061" y="441" key="FileChooserDialogImpl/0.0.2560.1400@0.0.2560.1400" timestamp="1596272714039" />
-    <state width="2517" height="349" key="GridCell.Tab.0.bottom" timestamp="1596716711019">
+    <state width="2517" height="349" key="GridCell.Tab.0.bottom" timestamp="1596806053819">
       <screen x="0" y="0" width="2560" height="1400" />
     </state>
-    <state width="2517" height="349" key="GridCell.Tab.0.bottom/0.0.2560.1400@0.0.2560.1400" timestamp="1596716711019" />
-    <state width="2517" height="349" key="GridCell.Tab.0.center" timestamp="1596716711019">
+    <state width="2517" height="349" key="GridCell.Tab.0.bottom/0.0.2560.1400@0.0.2560.1400" timestamp="1596806053819" />
+    <state width="2517" height="349" key="GridCell.Tab.0.center" timestamp="1596806053819">
       <screen x="0" y="0" width="2560" height="1400" />
     </state>
-    <state width="2517" height="349" key="GridCell.Tab.0.center/0.0.2560.1400@0.0.2560.1400" timestamp="1596716711019" />
-    <state width="2517" height="349" key="GridCell.Tab.0.left" timestamp="1596716711019">
+    <state width="2517" height="349" key="GridCell.Tab.0.center/0.0.2560.1400@0.0.2560.1400" timestamp="1596806053819" />
+    <state width="2517" height="349" key="GridCell.Tab.0.left" timestamp="1596806053819">
       <screen x="0" y="0" width="2560" height="1400" />
     </state>
-    <state width="2517" height="349" key="GridCell.Tab.0.left/0.0.2560.1400@0.0.2560.1400" timestamp="1596716711019" />
-    <state width="2517" height="349" key="GridCell.Tab.0.right" timestamp="1596716711019">
+    <state width="2517" height="349" key="GridCell.Tab.0.left/0.0.2560.1400@0.0.2560.1400" timestamp="1596806053819" />
+    <state width="2517" height="349" key="GridCell.Tab.0.right" timestamp="1596806053819">
       <screen x="0" y="0" width="2560" height="1400" />
     </state>
-    <state width="2517" height="349" key="GridCell.Tab.0.right/0.0.2560.1400@0.0.2560.1400" timestamp="1596716711019" />
+    <state width="2517" height="349" key="GridCell.Tab.0.right/0.0.2560.1400@0.0.2560.1400" timestamp="1596806053819" />
     <state width="2517" height="492" key="GridCell.Tab.1.bottom" timestamp="1596704615117">
       <screen x="0" y="0" width="2560" height="1400" />
     </state>
@@ -302,10 +298,10 @@
       <screen x="0" y="0" width="2560" height="1400" />
     </state>
     <state x="782" y="345" key="SettingsEditor/0.0.2560.1400@0.0.2560.1400" timestamp="1595411288038" />
-    <state x="873" y="434" key="Vcs.Push.Dialog.v2" timestamp="1596282949642">
+    <state x="873" y="434" key="Vcs.Push.Dialog.v2" timestamp="1596717596774">
       <screen x="0" y="0" width="2560" height="1400" />
     </state>
-    <state x="873" y="434" key="Vcs.Push.Dialog.v2/0.0.2560.1400@0.0.2560.1400" timestamp="1596282949642" />
+    <state x="873" y="434" key="Vcs.Push.Dialog.v2/0.0.2560.1400@0.0.2560.1400" timestamp="1596717596774" />
     <state x="894" y="385" key="com.intellij.openapi.editor.actions.MultiplePasteAction$ClipboardContentChooser" timestamp="1596180849771">
       <screen x="0" y="0" width="2560" height="1400" />
     </state>
@@ -325,9 +321,9 @@
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
     <SUITE FILE_PATH="coverage/FalseName$WPG_infocom.coverage" NAME="WPG_infocom Coverage Results" MODIFIED="1596699453393" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
-    <SUITE FILE_PATH="coverage/FalseName$main.coverage" NAME="main Coverage Results" MODIFIED="1596716711010" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/FalseName$main.coverage" NAME="main Coverage Results" MODIFIED="1596806053813" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/FalseName$test.coverage" NAME="test Coverage Results" MODIFIED="1596638212231" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/FalseName$MultiMinded.coverage" NAME="MultiMinded Coverage Results" MODIFIED="1596696444899" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
-    <SUITE FILE_PATH="coverage/FalseName$SingleMinded.coverage" NAME="SingleMinded Coverage Results" MODIFIED="1596699724615" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/FalseName$SingleMinded.coverage" NAME="SingleMinded Coverage Results" MODIFIED="1596805449999" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
   </component>
 </project>
